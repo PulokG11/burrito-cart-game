@@ -1,17 +1,18 @@
 # Burrito Cart Game
 
-A burrito cart management simulation game.
+A burrito cart management simulation game built with vanilla HTML, CSS, and JavaScript.
 
 ## Project Structure
 
 ```
 burrito-cart-game/
-├── src/        # Game source code
-├── assets/     # Images, audio, fonts
-├── docs/       # Design docs, GDD
+├── src/           # Game source files (HTML, CSS, JS)
+├── assets/
+│   └── images/    # Sprites and artwork
+├── docs/          # Design documents and game specs
 └── README.md
 ```
 
-## Getting Started
+## Status
 
-TBD — project setup instructions will go here.
+Early development — project scaffolded.
