@@ -1,10 +1,19 @@
+import { FinalScreen } from './components/FinalScreen'
+import { Header } from './components/Header'
+import { HomeScreen } from './components/HomeScreen'
+import { PlayScreen } from './components/PlayScreen'
+import { ResultsScreen } from './components/ResultsScreen'
+import { useGame } from './store/game'
+
 export default function App() {
+  const screen = useGame((s) => s.screen)
   return (
-    <div className="min-h-screen bg-amber-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-amber-800 mb-2">Burrito Cart Game</h1>
-        <p className="text-amber-600">Scaffold ready — implementation coming soon.</p>
-      </div>
+    <div className="flex min-h-screen flex-col bg-bg text-ink">
+      <Header />
+      {screen === 'home' && <HomeScreen />}
+      {screen === 'play' && <PlayScreen />}
+      {screen === 'results' && <ResultsScreen />}
+      {screen === 'final' && <FinalScreen />}
     </div>
   )
 }

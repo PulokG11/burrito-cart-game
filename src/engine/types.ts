@@ -1,57 +1,85 @@
-export interface Scenario {
-  scenarioId: string
-  version: string
-  mode: 'normal' | 'championship'
-  round: 1 | 2
-  day: 1 | 2 | 3 | 4 | 5
-  newsText: string
-  revenueR: number
-  ingredientK: number
-  truckCostF: number
-  isUncertain: boolean
-  contentHash: string
-  buildings: Building[]
-  sites: Site[]
-  reachPairs: ReachPair[]
+export type Mode = 'normal' | 'championship'
+
+export type Wrinkle =
+  | 'opening'
+  | 'growth'
+  | 'cost'
+  | 'rain'
+  | 'festival'
+  | 'forecast'
+  | 'volatile'
+  | 'critic'
+  | 'upside'
+  | 'downside'
+
+export interface Economics {
+  revenue: number
+  ingredient: number
+  truckCost: number
 }
 
+export interface WalkProfile {
+  type: 'linear'
+  plateau: number
+  maxDistance: number
+}
+
+// Round 1: `demand` is exact. Round 2: `demand` is the forecast (triangular mode), min/max are the error bars.
 export interface Building {
   id: string
-  demand: number
-  forecast?: number
-  errMin?: number
-  errMax?: number
+  name: string
   x: number
   y: number
-  label: string
+  demand: number
+  min?: number
+  max?: number
 }
 
 export interface Site {
   id: string
-  fixedCost: number
   x: number
   y: number
-  label: string
 }
 
-export interface ReachPair {
-  buildingId: string
-  siteId: string
-  alpha: number
+export interface Reach {
+  b: string
+  s: string
+  d: number
+  a: number
+}
+
+export interface Plan {
+  sites: string[]
+  plannedProfit: number
+}
+
+export interface Scenario {
+  id: string
+  version: string
+  mode: Mode
+  round: 1 | 2
+  day: number
+  title: string
+  news: string
+  wrinkle: Wrinkle
+  economics: Economics
+  walk: WalkProfile
+  uncertain: boolean
+  buildings: Building[]
+  sites: Site[]
+  reach: Reach[]
+  contentHash: string
+  optimal: Plan
+  greedy: Plan
 }
 
 export interface Score {
   revenue: number
-  ingredientCost: number
+  ingredient: number
   truckCost: number
   profit: number
-  customersByBuilding: Record<string, number>
+  won: Record<string, number>
+  assign: Record<string, string | null>
 }
 
-export interface DayResult {
-  openSiteIds: string[]
-  demand: Record<string, number>
-  playerScore: Score
-  optimalScore: Score | null
-  gapPct: number | null
-}
+export type Demand = Record<string, number>

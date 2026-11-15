@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS leaderboard_entry;
+DROP TABLE IF EXISTS day_result;
+DROP TABLE IF EXISTS game_session;
+DROP TABLE IF EXISTS championship;
+DROP TABLE IF EXISTS player;
+DROP TABLE IF EXISTS optimal_solution;
+DROP TABLE IF EXISTS scenario_reach;
+DROP TABLE IF EXISTS scenario_site;
+DROP TABLE IF EXISTS scenario_building;
+DROP TABLE IF EXISTS scenario;

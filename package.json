@@ -1,29 +1,39 @@
 {
   "name": "burrito-cart-game",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "scenarios": "node scripts/build-scenarios.ts",
+    "db:apply": "node scripts/db-apply.ts",
+    "api:dev": "node scripts/serve-api.ts",
+    "api:build": "esbuild server/index.ts --bundle --platform=node --format=esm --target=node24 --minify --legal-comments=none --outfile=dist-server/index.mjs",
+    "test:api": "node scripts/test-api.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0",
-    "highs": "^1.7.2",
+    "highs": "^1.15.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.23.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
+    "esbuild": "^0.21.5",
+    "pg": "^8.23.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.5.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vitest": "^3.2.7"
   }
 }
