@@ -63,7 +63,9 @@ export function ResultsScreen() {
               ? 'Lucky draw: you beat the solver today!'
               : matched
                 ? 'You matched the optimal solution!'
-                : `${pct(rec.gapPct)} below optimal`}
+                : rec.player.profit < 0
+                  ? `Your trucks lost ${money(-rec.player.profit)} today`
+                  : `${pct(rec.gapPct)} below optimal`}
           </h1>
           <p className="mt-1 text-sm text-muted">
             {rec.solveMs != null
