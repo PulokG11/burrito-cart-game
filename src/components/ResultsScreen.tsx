@@ -17,8 +17,10 @@ const BADGE: Record<Verification, string> = {
 type View = 'mine' | 'best' | 'both'
 
 export function ResultsScreen() {
-  const { records, dayIndex, nextDay } = useGame()
-  const [view, setView] = useState<View>('both')
+  const { records, dayIndex, nextDay, matchCode } = useGame()
+  const [chosen, setView] = useState<View>('both')
+  // Championship rule: the best plan's profit is shown, its truck locations are not.
+  const view: View = matchCode ? 'mine' : chosen
   const [names, setNames] = useState(false)
   const scn = SCENARIOS[dayIndex]
   const rec = records[records.length - 1]
@@ -34,6 +36,9 @@ export function ResultsScreen() {
     <div className="flex flex-1 flex-col lg:flex-row">
       <main className="flex min-w-0 flex-1 flex-col gap-3 p-3 lg:p-5">
         <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 lg:max-w-[calc((100vh-64px-60px-40px)*20/14)]">
+          {matchCode ? (
+            <p className="rounded-xl bg-[#1C3A8A] px-4 py-2 text-[15px] font-bold text-white">Championship {matchCode}: the best plan's trucks stay hidden</p>
+          ) : (
           <div role="group" aria-label="Show plans" className="inline-flex overflow-hidden rounded-xl border-2 border-[#1C3A8A] bg-white">
             {views.map(([v, label], i) => (
               <button
@@ -47,6 +52,7 @@ export function ResultsScreen() {
               </button>
             ))}
           </div>
+          )}
           <p className="text-[15px] text-muted">
             {scn.uncertain ? 'Numbers show actual demand. ' : ''}Rings show the share of each building {view === 'best' ? 'the best plan' : 'you'} won.
           </p>
@@ -71,7 +77,7 @@ export function ResultsScreen() {
           </ZoomableMap>
           <div className="absolute bottom-3 left-3 flex flex-col gap-1.5 rounded-xl bg-white p-3 text-sm text-[#1A1F2E] shadow-[0_2px_0_rgba(0,0,0,0.25)]">
             <span className="flex items-center gap-2.5"><TruckIcon className="h-5 w-8" />Your truck</span>
-            <span className="flex items-center gap-2.5">
+            <span className={`items-center gap-2.5 ${matchCode ? 'hidden' : 'flex'}`}>
               <svg viewBox="0 0 46 28" className="h-5 w-8" aria-hidden><rect x={1.5} y={2.5} width={42} height={21} rx={4} fill="rgba(246,178,43,0.25)" stroke="#F6B22B" strokeWidth={3} strokeDasharray="5 3" /></svg>
               Best plan's truck
             </span>
@@ -131,7 +137,7 @@ export function ResultsScreen() {
             {[
               ['Sales', money(rec.player.revenue), money(rec.optimal.revenue)],
               ['Ingredients', cost(rec.player.ingredient), cost(rec.optimal.ingredient)],
-              ['Trucks', `${rec.open.length} × ${money(f)}`, `${rec.optimalSites.length} × ${money(f)}`],
+              ['Trucks', `${rec.open.length} × ${money(f)}`, matchCode ? 'hidden' : `${rec.optimalSites.length} × ${money(f)}`],
             ].map(([k, a, b]) => (
               <tr key={k} className="border-t border-white/20 text-right">
                 <td className="py-1.5 text-left">{k}</td>

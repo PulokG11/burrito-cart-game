@@ -2,18 +2,28 @@ import { useEffect, useState } from 'react'
 import { apiEnabled, fetchLeaderboard, type LeaderboardEntry } from '../lib/api'
 import { money, pct } from '../lib/format'
 
-export function Leaderboard({ limit = 10, highlight, refreshKey }: { limit?: number; highlight?: { name: string; total: number }; refreshKey?: unknown }) {
+export function Leaderboard({
+  limit = 10,
+  highlight,
+  refreshKey,
+  matchCode,
+}: {
+  limit?: number
+  highlight?: { name: string; total: number }
+  refreshKey?: unknown
+  matchCode?: string | null
+}) {
   const [entries, setEntries] = useState<LeaderboardEntry[] | null | undefined>(undefined)
 
   useEffect(() => {
     if (!apiEnabled) return
     let live = true
     setEntries(undefined)
-    fetchLeaderboard(limit).then((e) => live && setEntries(e))
+    fetchLeaderboard(limit, matchCode).then((e) => live && setEntries(e))
     return () => {
       live = false
     }
-  }, [limit, refreshKey])
+  }, [limit, refreshKey, matchCode])
 
   if (!apiEnabled) return <p className="text-sm text-muted">The leaderboard is unavailable in offline mode.</p>
   if (entries === undefined) return <p className="text-sm text-muted">Loading leaderboard…</p>

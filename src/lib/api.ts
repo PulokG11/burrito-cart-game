@@ -9,6 +9,7 @@ export interface RemoteSession {
   token: string
   seed: string
   displayName: string
+  matchCode: string | null
 }
 
 export interface SubmitResponse {
@@ -17,7 +18,7 @@ export interface SubmitResponse {
   completed: boolean
   actual: Demand
   player: { profit: number }
-  optimal: { sites: string[]; profit: number }
+  optimal: { sites?: string[]; profit: number }
   gapPct: number
 }
 
@@ -29,23 +30,33 @@ export interface LeaderboardEntry {
   at: string
 }
 
-async function call<T>(path: string, init: RequestInit = {}, timeoutMs = 12000): Promise<T | null> {
-  if (!BASE) return null
+export interface Championship {
+  code: string
+  expiresAt: string
+}
+
+type Result<T> = { data: T; error: null } | { data: null; error: string }
+
+async function request<T>(path: string, init: RequestInit = {}, timeoutMs = 12000): Promise<Result<T>> {
+  if (!BASE) return { data: null, error: 'The game is offline, so championships are unavailable.' }
   try {
     const res = await fetch(`${BASE}${path}`, {
       ...init,
       headers: { 'Content-Type': 'application/json', ...init.headers },
       signal: AbortSignal.timeout(timeoutMs),
     })
-    if (!res.ok) return null
-    return (await res.json()) as T
+    const body = await res.json().catch(() => null)
+    if (!res.ok) return { data: null, error: (body && typeof body.error === 'string' && body.error) || `Request failed (${res.status})` }
+    return { data: body as T, error: null }
   } catch {
-    return null
+    return { data: null, error: 'Could not reach the game server. Check your connection and try again.' }
   }
 }
 
-export const createSession = (displayName: string) =>
-  call<RemoteSession>('/v1/sessions', { method: 'POST', body: JSON.stringify({ displayName }) })
+const call = <T>(path: string, init?: RequestInit) => request<T>(path, init).then((r) => r.data)
+
+export const createSession = (displayName: string, matchCode?: string) =>
+  request<RemoteSession>('/v1/sessions', { method: 'POST', body: JSON.stringify(matchCode ? { displayName, matchCode } : { displayName }) })
 
 export const submitDay = (s: RemoteSession, scenarioId: string, openSites: string[]) =>
   call<SubmitResponse>(`/v1/sessions/${s.sessionId}/days/${scenarioId}/submit`, {
@@ -54,5 +65,10 @@ export const submitDay = (s: RemoteSession, scenarioId: string, openSites: strin
     body: JSON.stringify({ openSites }),
   })
 
-export const fetchLeaderboard = (limit = 10) =>
-  call<{ entries: LeaderboardEntry[] }>(`/v1/leaderboard?limit=${limit}`).then((r) => r?.entries ?? null)
+export const fetchLeaderboard = (limit = 10, matchCode?: string | null) =>
+  call<{ entries: LeaderboardEntry[] }>(
+    matchCode ? `/v1/championships/${encodeURIComponent(matchCode)}/leaderboard?limit=${limit}` : `/v1/leaderboard?limit=${limit}`,
+  ).then((r) => r?.entries ?? null)
+
+export const createChampionship = (code: string, organizerName: string, hours: number) =>
+  request<Championship>('/v1/championships', { method: 'POST', body: JSON.stringify({ code, organizerName, hours }) })

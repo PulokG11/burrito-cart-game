@@ -4,7 +4,7 @@ import { useGame } from '../store/game'
 import { Leaderboard } from './Leaderboard'
 
 export function FinalScreen() {
-  const { records, displayName, remote, restart } = useGame()
+  const { records, displayName, remote, restart, matchCode } = useGame()
   const total = records.reduce((s, r) => s + r.player.profit, 0)
   const optimal = records.reduce((s, r) => s + r.optimal.profit, 0)
   const share = optimal > 0 ? (total / optimal) * 100 : 0
@@ -14,7 +14,7 @@ export function FinalScreen() {
   return (
     <div className="mx-auto grid w-full max-w-6xl flex-1 gap-4 p-3 lg:grid-cols-[1.3fr_1fr] lg:p-6">
       <section className="panel">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted">All 10 days complete</p>
+        <p className="text-sm font-bold text-muted">All 10 days complete</p>
         <h1 className="font-display text-3xl font-bold">
           {displayName}, you earned {money(total)}
         </h1>
@@ -53,11 +53,14 @@ export function FinalScreen() {
       </section>
 
       <section className="panel">
-        <h2 className="mb-1 font-semibold">Leaderboard</h2>
+        <h2 className="mb-1 font-semibold">{matchCode ? `Championship ${matchCode}` : 'Leaderboard'}</h2>
         <p className="mb-3 text-xs text-muted">
-          {saved ? 'Your game was saved.' : pendingAny ? 'Saving your last day…' : remote ? 'Some days were not saved, so this game is not ranked.' : 'Offline games are not ranked.'} Ranked by share of the optimal profit, because Round 2 demand is random for each player.
+          {saved ? 'Your game was saved.' : pendingAny ? 'Saving your last day…' : remote ? 'Some days were not saved, so this game is not ranked.' : 'Offline games are not ranked.'}{' '}
+          {matchCode
+            ? 'Ranked by total profit: everyone in this championship played the same demand.'
+            : 'Ranked by share of the optimal profit, because Round 2 demand is random for each player.'}
         </p>
-        <Leaderboard limit={15} highlight={{ name: displayName, total }} refreshKey={pendingAny} />
+        <Leaderboard limit={matchCode ? 50 : 15} highlight={{ name: displayName, total }} refreshKey={pendingAny} matchCode={matchCode} />
       </section>
     </div>
   )

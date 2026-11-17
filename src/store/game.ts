@@ -35,7 +35,9 @@ interface GameState {
   solving: boolean
   newsOpen: boolean
 
-  start: (displayName: string) => Promise<void>
+  matchCode: string | null
+  /** Resolves to an error message when joining a championship fails. */
+  start: (displayName: string, matchCode?: string) => Promise<string | null>
   toggleSite: (id: string) => void
   placeAt: (id: string) => void
   moveTruck: (from: string, to: string) => void
@@ -59,13 +61,22 @@ export const useGame = create<GameState>((set, get) => ({
   solving: false,
   newsOpen: false,
 
-  start: async (displayName) => {
+  matchCode: null,
+
+  start: async (displayName, matchCode) => {
     set({ connecting: true })
-    const remote = apiEnabled ? await createSession(displayName) : null
+    const res = apiEnabled || matchCode ? await createSession(displayName, matchCode) : null
+    // A championship needs the server for its shared seed; a normal game can fall back to offline.
+    if (matchCode && !res?.data) {
+      set({ connecting: false })
+      return res?.error ?? 'Could not join that championship.'
+    }
+    const remote = res?.data ?? null
     set({
       screen: 'play',
       displayName: remote?.displayName ?? (displayName.trim() || 'Anonymous chef'),
       remote,
+      matchCode: remote?.matchCode ?? null,
       seed: remote?.seed ?? randomSeed(),
       connecting: false,
       dayIndex: 0,
@@ -73,6 +84,7 @@ export const useGame = create<GameState>((set, get) => ({
       records: [],
       newsOpen: true,
     })
+    return null
   },
 
   toggleSite: (id) =>
@@ -106,7 +118,10 @@ export const useGame = create<GameState>((set, get) => ({
       optimalSites,
       gapPct: gapPct(player.profit, optimal.profit),
       solveMs: live && live.status === 'Optimal' ? live.ms : null,
-      tips: buildTips(scn, open, optimalSites, actual, expectedDemand(scn), scn.greedy.sites),
+      // In a championship, drop tips that point at where the optimal trucks are.
+      tips: buildTips(scn, open, optimalSites, actual, expectedDemand(scn), scn.greedy.sites).filter(
+        (t) => !get().matchCode || !['great', 'movable', 'underserved'].includes(t.kind),
+      ),
       verification: remote ? 'pending' : 'offline',
     }
     set((s) => ({ records: [...s.records, record], screen: 'results', solving: false }))
@@ -132,5 +147,5 @@ export const useGame = create<GameState>((set, get) => ({
 
   setNewsOpen: (newsOpen) => set({ newsOpen }),
 
-  restart: () => set({ screen: 'home', remote: null, dayIndex: 0, open: [], records: [], seed: '' }),
+  restart: () => set({ screen: 'home', remote: null, matchCode: null, dayIndex: 0, open: [], records: [], seed: '' }),
 }))

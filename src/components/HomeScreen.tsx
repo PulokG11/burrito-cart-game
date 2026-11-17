@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { apiEnabled } from '../lib/api'
 import { useGame } from '../store/game'
 import { Logo } from './Header'
+import { ChampionshipPanel } from './ChampionshipPanel'
 import { Leaderboard } from './Leaderboard'
 
 export function HomeScreen() {
@@ -63,6 +64,7 @@ export function HomeScreen() {
       </section>
 
       <aside className="flex flex-col gap-4 lg:justify-center">
+        <ChampionshipPanel name={name} />
         <section className="panel">
           <h2 className="mb-2 font-semibold">Top chefs</h2>
           <Leaderboard limit={8} />

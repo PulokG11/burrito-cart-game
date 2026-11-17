@@ -58,7 +58,7 @@ const Op = ({ c }: { c: string }) => (
 )
 
 export function PlayScreen() {
-  const { dayIndex, open, records, solving, toggleSite, placeAt, moveTruck, removeTruck, clearTrucks, finishDay } = useGame()
+  const { dayIndex, open, records, solving, matchCode, toggleSite, placeAt, moveTruck, removeTruck, clearTrucks, finishDay } = useGame()
   const scn = SCENARIOS[dayIndex]
   const mapRef = useRef<MapHandle>(null)
   const trashRef = useRef<HTMLDivElement>(null)
@@ -187,6 +187,12 @@ export function PlayScreen() {
           <section className="flex flex-col gap-2">
             <p className="text-[15px] text-[#C9D4F2]">
               Round {scn.round}, day {scn.day} of 5
+              {matchCode && (
+                <>
+                  {', '}
+                  <span className="font-bold text-[#F6B22B]">championship {matchCode}</span>
+                </>
+              )}
             </p>
             <h1 className="font-display text-[28px] leading-tight">{scn.title}</h1>
             <p className="text-[15px] leading-relaxed text-[#E4EAFA]">{story}</p>

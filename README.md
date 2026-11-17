@@ -77,4 +77,4 @@ See `CHANGELOG.md` for releases and rollback steps.
 
 ## Status
 
-Playable prototype (v0.2.0). Not built yet: Championship mode (match codes; the tables exist), sound, and a minimap.
+Playable, with Championship mode (v0.4.0): create a match code on the home screen, share it, and everyone plays the same random demand on a shared leaderboard. Not built yet: sound, and separate Championship datasets.

@@ -10,6 +10,19 @@ git push
 
 Pushing to `main` redeploys GitHub Pages. The Neon Function and database are rolled back separately (see each entry).
 
+## v0.4.0-championship (2026-11-17)
+
+Championship mode, for classes and events.
+
+- **Create** a championship on the home screen: pick a code (1 to 19 letters or digits, case-sensitive) and how long it stays open (3 hours to 1 week). **Join** with the code and a chef name.
+- Everyone in a championship gets the same random Round 2 demand (one shared seed), so the leaderboard ranks by total profit.
+- No peeking: results show the best plan's profit but not its trucks; the plan switch, best-plan outlines and tips that point at optimal spots are hidden, and the API stops returning optimal locations for match games.
+- Final screen shows the championship's own leaderboard. Match games stay off the public leaderboard.
+- API (Neon Function `api`, redeployed): `POST /v1/championships`, `GET /v1/championships/{code}`, `GET /v1/championships/{code}/leaderboard`, and `matchCode` on `POST /v1/sessions`. No schema change (the 001 tables already had it).
+- Known limit: the scenario file shipped to browsers still contains the optimal plans, so a determined player could read them with developer tools. Championships use the same 10 days as normal play.
+
+Rollback: `git checkout v0.3.1-zoom -- src server scripts` then commit and push, and redeploy the function from that version (`npm run api:build`).
+
 ## v0.3.1-zoom (2026-11-17)
 
 - Zoom in and out buttons on the play and results maps (four levels, keeps the centre of the view).

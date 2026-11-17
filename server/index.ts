@@ -77,17 +77,85 @@ async function readJson(req: Request): Promise<any> {
 async function createSession(req: Request) {
   const body = await readJson(req)
   const raw = typeof body.displayName === 'string' ? body.displayName : ''
-  const name = raw.replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24) || 'Anonymous chef'
+  const name = cleanName(raw)
   const token = randomBytes(24).toString('hex')
-  const seed = randomBytes(8).toString('hex')
+  let seed = randomBytes(8).toString('hex')
+  let matchId: string | null = null
+  let matchCode: string | null = null
+
+  if (body.matchCode !== undefined) {
+    const code = typeof body.matchCode === 'string' ? body.matchCode.trim() : ''
+    if (!CODE.test(code)) throw new HttpError(422, 'Match codes are 1 to 19 letters or digits')
+    const [match] = await sql<{ matchId: string; seed: string; expired: boolean }>(
+      `SELECT json_build_object('matchId', match_id, 'seed', seed, 'expired', expires_at < now()) AS j FROM championship WHERE code = $1`,
+      [code],
+    )
+    if (!match) throw new HttpError(404, 'No championship uses that code. Codes are case-sensitive.')
+    if (match.expired) throw new HttpError(410, 'That championship has ended')
+    seed = match.seed
+    matchId = match.matchId
+    matchCode = code
+  }
+
   const [row] = await sql<{ sessionId: string }>(
     `WITH p AS (INSERT INTO player (display_name) VALUES ($1) RETURNING player_id)
-     INSERT INTO game_session (player_id, dataset_ver, seed, token_hash)
-     SELECT player_id, $2, $3, $4 FROM p
+     INSERT INTO game_session (player_id, dataset_ver, seed, token_hash, match_id)
+     SELECT player_id, $2, $3, $4, $5::uuid FROM p
      RETURNING json_build_object('sessionId', session_id) AS j`,
-    [name, DATASET, seed, sha256(token)],
+    [name, DATASET, seed, sha256(token), matchId],
   )
-  return { sessionId: row.sessionId, token, seed, datasetVer: DATASET, displayName: name }
+  return { sessionId: row.sessionId, token, seed, datasetVer: DATASET, displayName: name, matchCode }
+}
+
+const CODE = /^[A-Za-z0-9]{1,19}$/
+
+function cleanName(raw: string): string {
+  return raw.replace(/[\u0000-\u001f<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24) || 'Anonymous chef'
+}
+
+async function createChampionship(req: Request) {
+  const body = await readJson(req)
+  const code = typeof body.code === 'string' ? body.code.trim() : ''
+  if (!CODE.test(code)) throw new HttpError(422, 'Match codes are 1 to 19 letters or digits')
+  const hours = Math.min(24 * 30, Math.max(1, Math.round(Number(body.hours) || 72)))
+  const [taken] = await sql(`SELECT json_build_object('code', code) AS j FROM championship WHERE code = $1`, [code])
+  if (taken) throw new HttpError(409, 'That code is taken. Try another.')
+  const [row] = await sql<{ code: string; expiresAt: string }>(
+    `WITH p AS (INSERT INTO player (display_name) VALUES ($1) RETURNING player_id)
+     INSERT INTO championship (code, organizer_id, seed, dataset_ver, expires_at)
+     SELECT $2, player_id, $3, $4, now() + make_interval(hours => $5::int) FROM p
+     ON CONFLICT (code) DO NOTHING
+     RETURNING json_build_object('code', code, 'expiresAt', expires_at) AS j`,
+    [cleanName(typeof body.organizerName === 'string' ? body.organizerName : ''), code, randomBytes(8).toString('hex'), DATASET, hours],
+  )
+  if (!row) throw new HttpError(409, 'That code is taken. Try another.')
+  return row
+}
+
+async function championshipInfo(code: string) {
+  if (!CODE.test(code)) throw new HttpError(404, 'not found')
+  const [row] = await sql(
+    `SELECT json_build_object('code', c.code, 'expiresAt', c.expires_at, 'expired', c.expires_at < now(),
+       'players', (SELECT count(*) FROM game_session g WHERE g.match_id = c.match_id),
+       'finished', (SELECT count(*) FROM leaderboard_entry l WHERE l.match_id = c.match_id)) AS j
+     FROM championship c WHERE c.code = $1`,
+    [code],
+  )
+  if (!row) throw new HttpError(404, 'No championship uses that code')
+  return row
+}
+
+async function championshipLeaderboard(code: string, url: URL) {
+  if (!CODE.test(code)) throw new HttpError(404, 'not found')
+  const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit')) || 25))
+  const entries = await sql(
+    `SELECT json_build_object('name', l.display_name, 'totalProfit', l.total_profit, 'totalOptimal', l.total_optimal,
+              'efficiency', l.efficiency, 'at', l.created_at) AS j
+     FROM leaderboard_entry l JOIN championship c ON c.match_id = l.match_id
+     WHERE c.code = $1 ORDER BY l.total_profit DESC, l.created_at LIMIT $2`,
+    [code, limit],
+  )
+  return { entries }
 }
 
 async function submitDay(req: Request, sessionId: string, scenarioId: string) {
@@ -95,8 +163,8 @@ async function submitDay(req: Request, sessionId: string, scenarioId: string) {
   const auth = req.headers.get('authorization') ?? ''
   const token = auth.toLowerCase().startsWith('bearer ') ? auth.slice(7).trim() : ''
 
-  const [session] = await sql<{ seed: string; tokenHash: string; status: string }>(
-    `SELECT json_build_object('seed', seed, 'tokenHash', token_hash, 'status', status) AS j FROM game_session WHERE session_id = $1`,
+  const [session] = await sql<{ seed: string; tokenHash: string; status: string; matchId: string | null }>(
+    `SELECT json_build_object('seed', seed, 'tokenHash', token_hash, 'status', status, 'matchId', match_id) AS j FROM game_session WHERE session_id = $1`,
     [sessionId],
   )
   const given = Buffer.from(sha256(token))
@@ -161,7 +229,8 @@ async function submitDay(req: Request, sessionId: string, scenarioId: string) {
     totalProfit: res.totalProfit,
     actual,
     player: { revenue: player.revenue, ingredient: player.ingredient, truckCost: player.truckCost, profit: player.profit },
-    optimal: { sites: scn.optimalSites, profit: optimal.profit },
+    // Championship rule: show the optimal profit, never the optimal locations.
+    optimal: session.matchId ? { profit: optimal.profit } : { sites: scn.optimalSites, profit: optimal.profit },
     gapPct: gap,
   }
 }
@@ -200,6 +269,12 @@ export default {
       if (req.method === 'GET' && (path === '/' || path === '/health')) return json({ ok: true, build: BUILD })
       if (req.method === 'GET' && path === '/v1/leaderboard') return json(await leaderboard(url))
       if (req.method === 'POST' && path === '/v1/sessions') return json(await createSession(req), 201)
+      if (req.method === 'POST' && path === '/v1/championships') return json(await createChampionship(req), 201)
+      const c = path.match(/^\/v1\/championships\/([^/]+)(\/leaderboard)?$/)
+      if (req.method === 'GET' && c) {
+        const code = decodeURIComponent(c[1])
+        return json(c[2] ? await championshipLeaderboard(code, url) : await championshipInfo(code))
+      }
       const m = path.match(/^\/v1\/sessions\/([^/]+)\/days\/([^/]+)\/submit$/)
       if (req.method === 'POST' && m) return json(await submitDay(req, m[1], m[2]))
       return json({ error: 'not found' }, 404)

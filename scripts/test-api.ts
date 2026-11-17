@@ -30,6 +30,8 @@ async function call(method: string, path: string, body?: unknown, token?: string
 }
 
 let sessionId = ''
+let matchCode = ''
+const matchSessions: string[] = []
 try {
   const health = await call('GET', '/health')
   assert.equal(health.status, 200)
@@ -73,8 +75,52 @@ try {
   assert.ok(entry, 'completed session appears on the leaderboard')
   assert.ok(Math.abs(Number(entry.totalProfit) - expectedTotal) < 0.05, `total ${entry.totalProfit} vs ${expectedTotal}`)
   console.log('leaderboard entry', entry)
+
+  // Championship: shared draws, hidden optimum, per-match leaderboard.
+  matchCode = `test${Date.now().toString(36)}`
+  assert.equal((await call('POST', '/v1/championships', { code: 'bad code!' })).status, 422)
+  const made = await call('POST', '/v1/championships', { code: matchCode, organizerName: 'api test', hours: 1 })
+  assert.equal(made.status, 201, JSON.stringify(made.body))
+  assert.equal((await call('POST', '/v1/championships', { code: matchCode })).status, 409)
+  assert.equal((await call('POST', '/v1/sessions', { displayName: 'x', matchCode: 'nosuchcode1' })).status, 404)
+  assert.equal((await call('POST', '/v1/sessions', { displayName: 'x', matchCode: matchCode.toUpperCase() })).status, 404, 'codes are case-sensitive')
+
+  const a = await call('POST', '/v1/sessions', { displayName: 'api test A', matchCode })
+  const b = await call('POST', '/v1/sessions', { displayName: 'api test B', matchCode })
+  assert.equal(a.status, 201)
+  assert.equal(a.body.seed, b.body.seed, 'everyone in a match shares one seed')
+  matchSessions.push(a.body.sessionId, b.body.sessionId)
+
+  const r2 = scenarios.find((s) => s.uncertain)!
+  const ra = await call('POST', `/v1/sessions/${a.body.sessionId}/days/${r2.id}/submit`, { openSites: r2.greedy.sites }, a.body.token)
+  const rb = await call('POST', `/v1/sessions/${b.body.sessionId}/days/${r2.id}/submit`, { openSites: [] }, b.body.token)
+  assert.deepEqual(ra.body.actual, rb.body.actual, 'same actual demand for every player in the match')
+  assert.equal(ra.body.optimal.sites, undefined, 'championship never reveals optimal locations')
+
+  for (const scn of scenarios.filter((s) => s.id !== r2.id)) {
+    const r = await call('POST', `/v1/sessions/${a.body.sessionId}/days/${scn.id}/submit`, { openSites: scn.greedy.sites }, a.body.token)
+    assert.equal(r.status, 200)
+  }
+  const info = await call('GET', `/v1/championships/${matchCode}`)
+  assert.equal(info.body.players, 2)
+  assert.equal(info.body.finished, 1)
+  const mlb = await call('GET', `/v1/championships/${matchCode}/leaderboard`)
+  assert.deepEqual(mlb.body.entries.map((e: { name: string }) => e.name), ['api test A'])
+  const global = await call('GET', '/v1/leaderboard?limit=50')
+  assert.ok(!global.body.entries.some((e: { name: string }) => e.name === 'api test A'), 'match games stay off the public leaderboard')
+  console.log('championship OK', mlb.body.entries[0])
   console.log('API OK')
 } finally {
+  if (matchCode && process.env.DATABASE_URL) {
+    const db = new pg.Client({ connectionString: process.env.DATABASE_URL })
+    await db.connect()
+    const s = await db.query('DELETE FROM game_session WHERE session_id = ANY($1::uuid[]) RETURNING player_id', [matchSessions])
+    const c = await db.query('DELETE FROM championship WHERE code = $1 RETURNING organizer_id', [matchCode])
+    const ids = [...s.rows.map((r) => r.player_id), ...c.rows.map((r) => r.organizer_id)]
+    await db.query('DELETE FROM player WHERE player_id = ANY($1::uuid[])', [ids])
+    await db.end()
+    console.log('cleaned up test championship')
+  }
   if (sessionId && process.env.DATABASE_URL) {
     const db = new pg.Client({ connectionString: process.env.DATABASE_URL })
     await db.connect()
