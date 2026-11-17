@@ -10,6 +10,13 @@ git push
 
 Pushing to `main` redeploys GitHub Pages. The Neon Function and database are rolled back separately (see each entry).
 
+## v0.3.1-zoom (2026-11-17)
+
+- Zoom in and out buttons on the play and results maps (four levels, keeps the centre of the view).
+- A minimap appears whenever the map is panned or zoomed: it shows buildings, trucks and the visible area; click it to jump there.
+
+Rollback: `git checkout v0.3.0-redesign -- src` then commit and push.
+
 ## v0.3.0-redesign (2026-11-17)
 
 New look from the design mockups in `docs/design-mockups-2026-11-17/` ("Salsa Springs, painted").
@@ -20,7 +27,6 @@ New look from the design mockups in `docs/design-mockups-2026-11-17/` ("Salsa Sp
 - **Round 2:** range bars drawn to scale with forecast, average and (after Done) actual.
 - **Results:** one map with a Your plan / Best plan / Both switch, the best plan's trucks as outlines, tip arrows, and the verdict as a share of the best profit.
 - **Phone:** swipeable full-size map and a compact bottom bar.
-- Not built from the mockups: the minimap and zoom buttons.
 
 Rollback: `git checkout v0.2.0-prototype -- src index.html tailwind.config.ts` then commit and push. No backend or database changes.
 

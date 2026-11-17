@@ -8,6 +8,7 @@ import { warmUpSolver } from '../solver'
 import { useGame } from '../store/game'
 import { CityMap, MAP_H, MAP_W, type MapHandle } from './CityMap'
 import { NewsDialog } from './NewsDialog'
+import { ZoomableMap } from './ZoomableMap'
 import { Progress, Rail, RailDivider, WalkCurve } from './Rail'
 
 interface Drag {
@@ -149,13 +150,13 @@ export function PlayScreen() {
         <main className="flex min-w-0 flex-1 flex-col gap-2 p-3 lg:p-5">
           <div className="mx-auto flex w-full items-center justify-between gap-3 lg:max-w-[calc((100vh-64px-104px-96px)*20/14)]">
             <p className="text-[15px] text-muted">
-              <span className="sm:hidden">Swipe the map to see the whole city.</span>
+              <span className="sm:hidden">Swipe the map, or use the minimap to jump around.</span>
               <span className="hidden sm:inline">Drag trucks onto the yellow bays. Customers walk to the nearest one.</span>
             </p>
             <NamesSwitch on={names} onChange={setNames} />
           </div>
-          <div className="relative mx-auto w-full overflow-x-auto rounded-2xl lg:max-w-[calc((100vh-64px-104px-96px)*20/14)]">
-            <div className="min-w-[680px]">
+          <div className="relative mx-auto w-full lg:max-w-[calc((100vh-64px-104px-96px)*20/14)]">
+            <ZoomableMap scn={scn} trucks={open}>
               <CityMap
                 ref={mapRef}
                 scn={scn}
@@ -178,7 +179,7 @@ export function PlayScreen() {
                 onTruckPointerDown={(id, ev) => beginDrag(id, ev)}
                 label={`Map of Salsa Springs with ${scn.buildings.length} buildings and ${scn.sites.length} parking bays`}
               />
-            </div>
+            </ZoomableMap>
           </div>
         </main>
 

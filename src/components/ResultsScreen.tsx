@@ -5,6 +5,7 @@ import { useGame, type Verification } from '../store/game'
 import { CityMap } from './CityMap'
 import { NamesSwitch, TruckIcon } from './PlayScreen'
 import { Rail, RailDivider } from './Rail'
+import { ZoomableMap } from './ZoomableMap'
 
 const BADGE: Record<Verification, string> = {
   pending: 'Checking your score on the server…',
@@ -51,8 +52,8 @@ export function ResultsScreen() {
           </p>
           <NamesSwitch on={names} onChange={setNames} />
         </div>
-        <div className="relative mx-auto w-full overflow-x-auto rounded-2xl lg:max-w-[calc((100vh-64px-60px-40px)*20/14)]">
-          <div className="min-w-[680px]">
+        <div className="relative mx-auto w-full lg:max-w-[calc((100vh-64px-60px-40px)*20/14)]">
+          <ZoomableMap scn={scn} trucks={view === 'best' ? rec.optimalSites : rec.open}>
             <CityMap
               scn={scn}
               open={rec.open}
@@ -67,7 +68,7 @@ export function ResultsScreen() {
               showLinks
               label="Map comparing your trucks with the best plan's trucks"
             />
-          </div>
+          </ZoomableMap>
           <div className="absolute bottom-3 left-3 flex flex-col gap-1.5 rounded-xl bg-white p-3 text-sm text-[#1A1F2E] shadow-[0_2px_0_rgba(0,0,0,0.25)]">
             <span className="flex items-center gap-2.5"><TruckIcon className="h-5 w-8" />Your truck</span>
             <span className="flex items-center gap-2.5">
