@@ -13,9 +13,9 @@ export function HomeScreen() {
       <section className="flex flex-col justify-center">
         <div className="flex items-center gap-3">
           <Logo className="h-14 w-14" />
-          <p className="text-sm font-bold uppercase tracking-widest text-accent">An optimization game</p>
+          <p className="text-base font-bold text-accent">A game about optimization</p>
         </div>
-        <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">Can you beat the solver at placing burrito trucks?</h1>
+        <h1 className="mt-4 font-display text-3xl leading-tight text-accent sm:text-[44px]">Can you beat the solver at placing burrito trucks?</h1>
         <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">
           Burrito Cart Co. is opening in Salsa Springs. Every truck costs money, and customers only walk so far. Place your trucks, click Done, and see how your
           profit compares with the provably optimal plan.

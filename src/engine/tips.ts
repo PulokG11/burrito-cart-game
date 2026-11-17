@@ -8,6 +8,7 @@ export interface Tip {
   kind: TipKind
   text: string
   at?: { x: number; y: number }
+  to?: { x: number; y: number }
 }
 
 const WRINKLE_TEXT: Record<Wrinkle, string> = {
@@ -71,8 +72,9 @@ export function buildTips(
     const dir = direction(site.get(move.from)!, site.get(move.to)!)
     tips.push({
       kind: 'movable',
-      text: `Good spot, but moving this truck a little ${dir} would earn about ${Math.round(move.gain)} more.`,
+      text: `Good spot, but moving this truck a little ${dir} would earn about $${Math.round(move.gain)} more.`,
       at: site.get(move.from),
+      to: site.get(move.to),
     })
   }
 

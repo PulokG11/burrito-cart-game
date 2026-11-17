@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phone play screen</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1C3A8A}a:hover{color:#13285F}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #3F4452; color: #1A1F2E; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;">
+
+  <header style="position: absolute; left: 0; top: 0; width: 390px; height: 56px; box-sizing: border-box; padding: 0 8px 0 14px; display: flex; align-items: center; gap: 10px; background: #F2F4F0; border-bottom: 1px solid #D5DAD2; z-index: 3;">
+    <svg width="30" height="30" viewBox="0 0 56 56" aria-hidden="true">
+      <circle cx="28" cy="28" r="27" fill="#1C3A8A"></circle>
+      <g transform="rotate(-24 28 28)"><rect x="11" y="21" width="34" height="15" rx="7.5" fill="#F3D9A4" stroke="#B8892E" stroke-width="2"></rect><circle cx="19" cy="28.5" r="2.2" fill="#2E8B57"></circle><circle cx="26" cy="27" r="1.8" fill="#CF2E22"></circle><circle cx="32" cy="29.5" r="2" fill="#2E8B57"></circle></g>
+    </svg>
+    <div style="display: flex; flex-direction: column; line-height: 1.15;">
+      <span style="font-family: Bungee, system-ui, sans-serif; font-size: 16px; color: #1C3A8A;">Grand opening</span>
+      <span style="font-size: 13px; color: #4A5468;">Round 1, day 1 of 5</span>
+    </div>
+    <button type="button" style="margin-left: auto; height: 44px; padding: 0 12px; border: 1px solid #C9CFC6; border-radius: 10px; background: #FFFFFF; color: #1C3A8A; font: 700 14px 'Atkinson Hyperlegible', sans-serif;">News</button>
+    <button type="button" aria-label="Menu" style="width: 44px; height: 44px; border: 1px solid #C9CFC6; border-radius: 10px; background: #FFFFFF; color: #1C3A8A; display: inline-flex; align-items: center; justify-content: center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M4 7h16 M4 12h16 M4 17h16"></path></svg></button>
+  </header>
+
+  <div role="img" aria-label="Zoomed map of the west side of Salsa Springs with one truck placed" style="position: absolute; left: 0; top: 56px; width: 390px; height: 520px; overflow: hidden;">
+    <div style="position: absolute; left: -47px; top: -23px; width: 780px; height: 546px;">
+      <sc-for list="{{blocks}}" as="k" hint-placeholder-count="48">
+        <div style="position: absolute; left: {{k.left}}px; top: {{k.top}}px; width: {{k.w}}px; height: {{k.h}}px; border-radius: {{k.r}}px; background: {{k.bg}};"></div>
+      </sc-for>
+      <sc-for list="{{trees}}" as="t" hint-placeholder-count="20">
+        <div style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; width: {{t.d}}px; height: {{t.d}}px; border-radius: 50%; background: {{t.bg}}; box-shadow: 0 2px 0 rgba(20,60,35,0.35);"></div>
+      </sc-for>
+      <sc-for list="{{dashesV}}" as="s" hint-placeholder-count="7">
+        <div style="position: absolute; left: {{s.left}}px; top: 0; width: 2px; height: 546px; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.5) 0 8px, transparent 8px 18px);"></div>
+      </sc-for>
+      <sc-for list="{{dashesH}}" as="s" hint-placeholder-count="5">
+        <div style="position: absolute; left: 0; top: {{s.top}}px; width: 780px; height: 2px; background: repeating-linear-gradient(to right, rgba(255,255,255,0.5) 0 8px, transparent 8px 18px);"></div>
+      </sc-for>
+      <sc-for list="{{bays}}" as="b" hint-placeholder-count="12">
+        <div style="position: absolute; left: {{b.left}}px; top: {{b.top}}px; width: {{b.w}}px; height: {{b.h}}px; border-radius: 4px; box-sizing: border-box; border: 2px solid #F6B22B; background: rgba(246,178,43,0.2);"></div>
+      </sc-for>
+      <sc-for list="{{walkers}}" as="w" hint-placeholder-count="5">
+        <div style="position: absolute; left: {{w.left}}px; top: {{w.top}}px; width: 8px; height: 8px; border-radius: 50%; background: #F6B22B; border: 1.5px solid #1C3A8A;"></div>
+      </sc-for>
+      <sc-for list="{{buildings}}" as="b" hint-placeholder-count="6">
+        <div style="position: absolute; left: {{b.left}}px; top: {{b.top}}px; width: 42px; height: 42px; box-sizing: border-box; border-radius: 8px; background: {{b.tint}}; border: 2px solid rgba(28,58,138,0.55); box-shadow: 0 3px 0 rgba(28,58,138,0.3); display: flex; align-items: center; justify-content: center;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1C3A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{b.glyph}}"></path></svg>
+        </div>
+        <div style="position: absolute; left: {{b.badgeLeft}}px; top: {{b.badgeTop}}px; width: 40px; height: 40px; border-radius: 50%; background: conic-gradient(#F6B22B {{b.deg}}deg, #FFFFFF 0); display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(0,0,0,0.2);">
+          <div style="width: 30px; height: 30px; border-radius: 50%; background: #CF2E22; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Bungee, system-ui, sans-serif; font-size: 13px; line-height: 1;">{{b.demand}}</div>
+        </div>
+      </sc-for>
+      <sc-for list="{{trucks}}" as="t" hint-placeholder-count="1">
+        <div style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; width: 46px; height: 28px; transform: {{t.transform}};">
+          <svg width="46" height="28" viewBox="0 0 46 28" aria-hidden="true">
+            <rect x="3" y="5" width="32" height="21" rx="4" fill="rgba(0,0,0,0.25)"></rect>
+            <rect x="1" y="2" width="33" height="22" rx="4" fill="#1C3A8A"></rect>
+            <rect x="1" y="2" width="33" height="6" rx="3" fill="#F6B22B"></rect>
+            <rect x="33" y="5" width="11" height="16" rx="3.5" fill="#2D55B8"></rect>
+            <rect x="40" y="7" width="3" height="12" rx="1" fill="#CFE3FF"></rect>
+            <ellipse cx="17" cy="15" rx="8" ry="4.2" fill="#F3D9A4" stroke="#B8892E" stroke-width="1.5"></ellipse>
+          </svg>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="position: absolute; right: 10px; top: 10px; width: 100px; height: 72px; box-sizing: border-box; padding: 4px; border-radius: 10px; background: #FFFFFF; box-shadow: 0 2px 0 rgba(0,0,0,0.3);" aria-label="Minimap: you are viewing the west half of the city" role="img">
+      <div style="position: relative; width: 92px; height: 64px; border-radius: 6px; background: #E9E4D8; overflow: hidden;">
+        <sc-for list="{{mini}}" as="m" hint-placeholder-count="12">
+          <div style="position: absolute; left: {{m.left}}px; top: {{m.top}}px; width: {{m.d}}px; height: {{m.d}}px; border-radius: 50%; background: #CF2E22;"></div>
+        </sc-for>
+        <div style="position: absolute; left: 5px; top: 3px; width: 46px; height: 59px; box-sizing: border-box; border: 2px solid #1C3A8A; border-radius: 3px; background: rgba(28,58,138,0.12);"></div>
+      </div>
+    </div>
+
+    <div style="position: absolute; right: 10px; bottom: 34px; display: flex; flex-direction: column; gap: 8px;">
+      <button type="button" aria-label="Zoom in" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: #FFFFFF; color: #1C3A8A; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(0,0,0,0.3);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M12 5v14 M5 12h14"></path></svg></button>
+      <button type="button" aria-label="Zoom out" style="width: 44px; height: 44px; border: 0; border-radius: 10px; background: #FFFFFF; color: #1C3A8A; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(0,0,0,0.3);"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h14"></path></svg></button>
+    </div>
+  </div>
+
+  <section style="position: absolute; left: 0; bottom: 0; width: 390px; height: 290px; box-sizing: border-box; padding: 10px 18px 20px; border-radius: 20px 20px 0 0; background: #FFFFFF; box-shadow: 0 -4px 0 rgba(28,58,138,0.18); display: flex; flex-direction: column; gap: 12px; z-index: 3;">
+    <div style="align-self: center; width: 44px; height: 5px; border-radius: 3px; background: #C9CFC6;"></div>
+    <div style="display: flex; align-items: baseline; justify-content: space-between;">
+      <span style="font-size: 15px; color: #4A5468;">Today's profit</span>
+      <span style="font-family: Bungee, system-ui, sans-serif; font-size: 36px; line-height: 1; color: #2E8B57;">$35</span>
+    </div>
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #2A3247;">= <strong style="color: #1C3A8A;">$1,070</strong> sales − <strong style="color: #1C3A8A;">$535</strong> ingredients − <strong style="color: #1C3A8A;">2 × $250</strong> trucks</p>
+    <div style="height: 1px; background: #E2E6DF;"></div>
+    <div style="display: flex; gap: 10px;">
+      <button type="button" style="flex: 1; height: 60px; display: inline-flex; align-items: center; gap: 10px; padding: 0 12px; border: 2px solid #1C3A8A; border-radius: 12px; background: #EEF2FC; color: #1C3A8A; font: 700 15px 'Atkinson Hyperlegible', sans-serif; text-align: left;">
+        <svg width="40" height="24" viewBox="0 0 46 28" aria-hidden="true"><rect x="1" y="2" width="33" height="22" rx="4" fill="#1C3A8A"></rect><rect x="1" y="2" width="33" height="6" rx="3" fill="#F6B22B"></rect><rect x="33" y="5" width="11" height="16" rx="3.5" fill="#2D55B8"></rect><ellipse cx="17" cy="15" rx="8" ry="4.2" fill="#F3D9A4" stroke="#B8892E" stroke-width="1.5"></ellipse></svg>
+        Drag a truck
+      </button>
+      <button type="button" style="width: 132px; height: 60px; border: 0; border-radius: 12px; background: #1C3A8A; color: #FFFFFF; font-family: Bungee, system-ui, sans-serif; font-size: 20px; box-shadow: 0 4px 0 #13285F;">Done</button>
+    </div>
+    <p style="margin: 0; font-size: 14px; line-height: 1.4; color: #4A5468;">Or tap a yellow bay to park. Tap a truck to pick it up again.</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var U = 39, HW = 0.31;
+    var SX = [1, 4, 7, 10, 13, 16, 19], SY = [1, 4, 7, 10, 13];
+    var xs = [0].concat(SX, [20]), ys = [0].concat(SY, [14]);
+    var tints = ['#F4A6B7', '#7CD3C8', '#F6DC6B', '#BBA9E6'];
+    var G = {
+      book: 'M4 5.5c2.5-1 5-1 8 1 3-2 5.5-2 8-1V19c-2.5-1-5-1-8 1-3-2-5.5-2-8-1z M12 6.5V20',
+      tag: 'M3.5 12.5l8.5-8.5h8v8l-8.5 8.5z M16 8h.01',
+      wave: 'M3 10c3-3 6 3 9 0s6 3 9 0 M3 15c3-3 6 3 9 0s6 3 9 0 M3 20c3-3 6 3 9 0s6 3 9 0',
+      frame: 'M4 4h16v16H4z M4 16l5-5 4 4 2.5-2.5L20 17 M15 8.5h.01',
+      boot: 'M7 3h5v9l6.5 2.5c1 .4 1.5 1.3 1.5 2.3V20H7z M7 16h13',
+      cards: 'M4 7h9.5v13H4z M9 4h10v13h-5.5'
+    };
+    var B = [
+      ['B02', 3.2, 3, 40, 'book', 0], ['B15', 4.8, 5, 22, 'tag', 0], ['B30', 9.2, 9, 42, 'wave', 14],
+      ['B31', 10.8, 8, 39, 'frame', 22], ['B32', 12.2, 9, 43, 'boot', 9], ['B41', 7.8, 11, 50, 'cards', 0]
+    ];
+    var all = [[3.2,3],[13.8,2],[15.2,3],[4.8,5],[13.8,5],[16.8,5],[18.2,6],[9.2,9],[10.8,8],[12.2,9],[7.8,11],[16.8,11]];
+    var sites = [['S01',4,1],['S03',11.5,4],['S04',4,5.5],['S05',7,5.5],['S06',10,5.5],['S08',1,7],['S09',8.5,7],['S10',10,7],['S11',4,8.5],['S13',7,10],['S14',11.5,10],['S15',1,11.5],['S16',2.5,13]];
+    var placed = { S06: true };
+
+    var blocks = [], trees = [];
+    for (var i = 0; i < xs.length - 1; i++) {
+      for (var j = 0; j < ys.length - 1; j++) {
+        var x0 = xs[i] === 0 ? 0 : xs[i] + HW, x1 = xs[i + 1] === 20 ? 20 : xs[i + 1] - HW;
+        var y0 = ys[j] === 0 ? 0 : ys[j] + HW, y1 = ys[j + 1] === 14 ? 14 : ys[j + 1] - HW;
+        var inner = i > 0 && i < xs.length - 2 && j > 0 && j < ys.length - 2;
+        var occupied = all.some(function (b) { return b[0] > x0 && b[0] < x1 && b[1] > y0 && b[1] < y1; });
+        var park = inner && !occupied;
+        blocks.push({ left: x0 * U, top: y0 * U, w: (x1 - x0) * U, h: (y1 - y0) * U, r: inner ? 10 : 3, bg: park ? '#A9D39A' : '#E9E4D8' });
+        if (park) {
+          var cx = (x0 + x1) / 2 * U, cy = (y0 + y1) / 2 * U;
+          [[-22, -20, 22], [14, -10, 28], [-9, 18, 20], [22, 22, 16]].forEach(function (t, n) {
+            trees.push({ left: cx + t[0] - t[2] / 2, top: cy + t[1] - t[2] / 2, d: t[2], bg: n % 2 ? '#3F9A63' : '#2E8B57' });
+          });
+        }
+      }
+    }
+    var dashesV = SX.map(function (x) { return { left: x * U - 1 }; });
+    var dashesH = SY.map(function (y) { return { top: y * U - 1 }; });
+
+    var siteXY = {}, bays = [], trucks = [];
+    sites.forEach(function (s) {
+      siteXY[s[0]] = [s[1], s[2]];
+      var onV = SX.indexOf(s[1]) >= 0, onH = SY.indexOf(s[2]) >= 0;
+      var w = onV && onH ? 16 : onV ? 12 : 22, h = onV && onH ? 16 : onV ? 22 : 12;
+      if (placed[s[0]]) trucks.push({ left: s[1] * U - 23, top: s[2] * U - 14, transform: onV && !onH ? 'rotate(90deg)' : 'none' });
+      else bays.push({ left: s[1] * U - w / 2, top: s[2] * U - h / 2, w: w, h: h });
+    });
+
+    var walkers = [];
+    [['B30', 9.2, 9], ['B31', 10.8, 8], ['B32', 12.2, 9]].forEach(function (b) {
+      var s = siteXY.S06;
+      [0.4, 0.72].forEach(function (f) {
+        walkers.push({ left: (b[1] + (s[0] - b[1]) * f) * U - 4, top: (b[2] + (s[1] - b[2]) * f) * U - 4 });
+      });
+    });
+
+    var buildings = B.map(function (b, n) {
+      return {
+        left: b[1] * U - 21, top: b[2] * U - 21, tint: tints[n % 4], glyph: G[b[4]],
+        badgeLeft: b[1] * U - 2, badgeTop: b[2] * U - 38, demand: b[3], deg: Math.round(b[5] / b[3] * 360)
+      };
+    });
+
+    var mini = all.map(function (p) { return { left: p[0] * 4.6 - 2.5, top: p[1] * 4.6 - 2.5, d: 5 }; });
+
+    return { blocks: blocks, trees: trees, dashesV: dashesV, dashesH: dashesH, bays: bays, trucks: trucks, walkers: walkers, buildings: buildings, mini: mini };
+  }
+}
+</script>
+</body>
+</html>

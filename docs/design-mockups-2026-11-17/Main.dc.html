@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Burrito Cart design review</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1C3A8A}a:hover{color:#13285F}
+</style>
+</helmet>
+<div style="width: 1440px; min-height: 1460px; box-sizing: border-box; padding: 72px 96px 80px; background: #F2F4F0; color: #1A1F2E; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; display: flex; flex-direction: column; gap: 56px;">
+
+  <header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 48px;">
+    <div style="display: flex; flex-direction: column; gap: 16px; max-width: 760px;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="27" fill="#1C3A8A"></circle>
+          <g transform="rotate(-24 28 28)">
+            <rect x="11" y="21" width="34" height="15" rx="7.5" fill="#F3D9A4" stroke="#B8892E" stroke-width="2"></rect>
+            <circle cx="19" cy="28.5" r="2.2" fill="#2E8B57"></circle>
+            <circle cx="26" cy="27" r="1.8" fill="#CF2E22"></circle>
+            <circle cx="32" cy="29.5" r="2" fill="#2E8B57"></circle>
+          </g>
+        </svg>
+        <h1 style="margin: 0; font-family: Bungee, system-ui, sans-serif; font-weight: 400; font-size: 48px; line-height: 1; color: #1C3A8A;">Burrito Cart</h1>
+      </div>
+      <p style="margin: 0; font-size: 20px; line-height: 1.5; color: #2A3247;">A review of the live prototype next to the inspiration game, and a direction that gives Salsa Springs a look of its own. These are mockups only; nothing in the game has changed.</p>
+    </div>
+    <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #4A5468; max-width: 300px;">Mockups use the real Day 1 and Heat wave data, and scores computed by the game's own engine.</p>
+  </header>
+
+  <section style="display: flex; flex-direction: column; gap: 20px;">
+    <h2 style="margin: 0; font-size: 26px; font-weight: 700;">The game today</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px;">
+      <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
+        <img src="/_blob/308124df840f16059c2adb51de843177" alt="Current play screen: a tan grid city with small white building tiles and small numbers" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid #C9CFC6;">
+        <figcaption style="font-size: 16px; line-height: 1.45; color: #2A3247;">Play. Every building is the same white tile, so the city has no landmarks. Numbers are about 9 px, and the trucks' walking reach never appears.</figcaption>
+      </figure>
+      <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
+        <img src="/_blob/5d52062a5b37e6cee47d48c9e8b10a88" alt="Current Round 2 screen with tiny grey range text under each building" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid #C9CFC6;">
+        <figcaption style="font-size: 16px; line-height: 1.45; color: #2A3247;">Round 2. Ranges are grey text like "40–76". A lopsided range looks exactly like an even one, which hides the point of Days 4 and 5.</figcaption>
+      </figure>
+      <figure style="margin: 0; display: flex; flex-direction: column; gap: 12px;">
+        <img src="/_blob/00976fa333115420f166651196a10e84" alt="Current results screen with two half-size maps side by side" style="width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 12px; border: 1px solid #C9CFC6;">
+        <figcaption style="font-size: 16px; line-height: 1.45; color: #2A3247;">Results. Two half-size maps make you look back and forth to find what the solver did differently.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: 1fr 2fr; gap: 56px;">
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 700;">Keep</h2>
+      <ul style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; font-size: 17px; line-height: 1.45;">
+        <li>Profit updates live as trucks move.</li>
+        <li>Tips pinned to the truck they talk about.</li>
+        <li>Every spot reachable by keyboard, with spoken labels.</li>
+        <li>Each day re-scored and saved by the server.</li>
+        <li>The solver runs on the player's own device and says how fast it was.</li>
+      </ul>
+      <h2 style="margin: 24px 0 0; font-size: 26px; font-weight: 700;">From the inspiration</h2>
+      <div style="display: flex; flex-direction: column; gap: 10px; font-size: 17px; line-height: 1.45;">
+        <p style="margin: 0;"><strong>Borrow:</strong> a city you can navigate by its landmarks, bold red demand badges, the profit equation in the toolbar, a round and day panel, a minimap, and range bars in Round 2.</p>
+        <p style="margin: 0;"><strong>Leave:</strong> the mint isometric art and branding, which are Gurobi's, and the "−7 | +7" offset labels, which make players do sums. Label the actual low and high instead.</p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 700;">Fix</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.45;">
+        <thead>
+          <tr style="text-align: left; color: #4A5468;">
+            <th style="padding: 0 24px 10px 0; font-weight: 700; width: 42%;">Now</th>
+            <th style="padding: 0 0 10px; font-weight: 700;">Proposed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Looks like any web app: cream page, terracotta accent, stacked rounded cards.</td>
+            <td style="padding: 12px 0; vertical-align: top;">A town with its own palette: talavera cobalt, chile, marigold and painted façades. One cobalt panel replaces the cards.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Buildings are identical tiles; the pun names hide in tooltips.</td>
+            <td style="padding: 12px 0; vertical-align: top;">Each building gets a rooftop sign (a loaf for Bayes Bakery, waves for Max-Flow Waterpark). A Names switch labels every pun.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Demand numbers around 9 px; truck spots are faint 4 px dots.</td>
+            <td style="padding: 12px 0; vertical-align: top;">32 px chile badges that keep their size at any zoom. Spots become yellow parking bays painted on the street.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Walking distance, the core rule, is described in text.</td>
+            <td style="padding: 12px 0; vertical-align: top;">A dragged truck shows how far customers will walk to it. The building panel plots the walking curve with this building on it.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Round 2 ranges are grey text.</td>
+            <td style="padding: 12px 0; vertical-align: top;">Range bars drawn to scale, marking the forecast and the average; after Done, the actual lands on the bar.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Results split into two half-size maps.</td>
+            <td style="padding: 12px 0; vertical-align: top;">One full map: your trucks solid, the best plan as outlines, a switch for either or both, and tips pinned with arrows.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">Profit shown as four separate numbers.</td>
+            <td style="padding: 12px 0; vertical-align: top;">Written as the equation the game teaches: profit = sales − ingredients − trucks.</td>
+          </tr>
+          <tr style="border-top: 1px solid #C9CFC6; border-bottom: 1px solid #C9CFC6;">
+            <td style="padding: 12px 24px 12px 0; vertical-align: top;">On a phone the whole map shrinks to 340 px.</td>
+            <td style="padding: 12px 0; vertical-align: top;">A zoomed map you pan, a minimap showing where you are, and the equation in a bottom sheet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 56px; padding-top: 8px;">
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 700;">Colour</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; font-size: 14px; line-height: 1.3;">
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #1C3A8A;"></div><span><strong>Cobalt</strong> #1C3A8A<br>Interface ink</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #CF2E22;"></div><span><strong>Chile</strong> #CF2E22<br>Demand only</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #F6B22B;"></div><span><strong>Marigold</strong> #F6B22B<br>Captured, bays</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #2E8B57;"></div><span><strong>Nopal</strong> #2E8B57<br>Parks, profit</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #3F4452;"></div><span><strong>Asphalt</strong> #3F4452<br>Streets</span></div>
+        <div style="display: flex; flex-direction: column; gap: 6px;"><div style="height: 56px; border-radius: 10px; background: #F2F4F0; border: 1px solid #C9CFC6;"></div><span><strong>Plaster</strong> #F2F4F0<br>Page</span></div>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center; font-size: 14px; color: #4A5468;">
+        <span style="width: 28px; height: 28px; border-radius: 6px; background: #F4A6B7;"></span>
+        <span style="width: 28px; height: 28px; border-radius: 6px; background: #7CD3C8;"></span>
+        <span style="width: 28px; height: 28px; border-radius: 6px; background: #F6DC6B;"></span>
+        <span style="width: 28px; height: 28px; border-radius: 6px; background: #BBA9E6;"></span>
+        <span>Façade tints for rooftops</span>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 700;">Type</h2>
+      <p style="margin: 0; font-family: Bungee, system-ui, sans-serif; font-size: 40px; line-height: 1.1; color: #1C3A8A;">$462</p>
+      <p style="margin: 0; font-size: 16px; line-height: 1.45;"><strong>Bungee</strong>, made for street signage, for numbers, titles and the Done button, like the lettering on a truck.</p>
+      <p style="margin: 0; font-size: 16px; line-height: 1.45;"><strong>Atkinson Hyperlegible</strong> for everything else. Players include first-year students and kids, so every label has to read at a glance.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <h2 style="margin: 0; font-size: 26px; font-weight: 700;">Principles</h2>
+      <div style="display: flex; flex-direction: column; gap: 14px; font-size: 16px; line-height: 1.45;">
+        <p style="margin: 0;"><strong>The city is the interface.</strong> Players should say "put one by the stadium", not "spot S14".</p>
+        <p style="margin: 0;"><strong>Show the rule, don't explain it.</strong> Walking reach, forecast spread and the solver's choice are drawn on the map.</p>
+        <p style="margin: 0;"><strong>The map is the loud part.</strong> Panels stay quiet: one cobalt surface, hairline dividers, no card stacks.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1460}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

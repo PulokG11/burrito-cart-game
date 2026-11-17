@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Round 2 forecast ranges</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css2?family=Bungee&amp;family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1C3A8A}a:hover{color:#13285F}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #F2F4F0; color: #1A1F2E; font-family: 'Atkinson Hyperlegible', system-ui, sans-serif; display: flex; flex-direction: column; gap: 20px; overflow: hidden;">
+  <header style="display: flex; flex-direction: column; gap: 6px; max-width: 900px;">
+    <h1 style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 700;">Round 2: show the spread, not just the forecast</h1>
+    <p style="margin: 0; font-size: 16px; line-height: 1.45; color: #2A3247;">Heat wave, east side of Salsa Springs. Every bar uses the same scale, so a longer bar means less certainty, and a lopsided bar means demand is likelier to land on that side.</p>
+  </header>
+
+  <div style="display: flex; gap: 40px; align-items: flex-start;">
+    <sc-for list="{{panels}}" as="p" hint-placeholder-count="2">
+      <figure style="margin: 0; display: flex; flex-direction: column; gap: 10px;">
+        <figcaption style="font-size: 18px; font-weight: 700;">{{p.caption}}</figcaption>
+        <div role="img" aria-label="{{p.aria}}" style="position: relative; width: 494px; height: 728px; border-radius: 18px; overflow: hidden; background: #3F4452;">
+          <div style="position: absolute; left: -530px; top: 0; width: 1040px; height: 728px;">
+            <sc-for list="{{blocks}}" as="k" hint-placeholder-count="48">
+              <div style="position: absolute; left: {{k.left}}px; top: {{k.top}}px; width: {{k.w}}px; height: {{k.h}}px; border-radius: {{k.r}}px; background: {{k.bg}};"></div>
+            </sc-for>
+            <sc-for list="{{trees}}" as="t" hint-placeholder-count="12">
+              <div style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; width: {{t.d}}px; height: {{t.d}}px; border-radius: 50%; background: {{t.bg}}; box-shadow: 0 3px 0 rgba(20,60,35,0.35);"></div>
+            </sc-for>
+            <sc-for list="{{dashesV}}" as="s" hint-placeholder-count="7">
+              <div style="position: absolute; left: {{s.left}}px; top: 0; width: 2px; height: 728px; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.5) 0 10px, transparent 10px 24px);"></div>
+            </sc-for>
+            <sc-for list="{{dashesH}}" as="s" hint-placeholder-count="5">
+              <div style="position: absolute; left: 0; top: {{s.top}}px; width: 1040px; height: 2px; background: repeating-linear-gradient(to right, rgba(255,255,255,0.5) 0 10px, transparent 10px 24px);"></div>
+            </sc-for>
+            <sc-for list="{{bays}}" as="b" hint-placeholder-count="20">
+              <div style="position: absolute; left: {{b.left}}px; top: {{b.top}}px; width: {{b.w}}px; height: {{b.h}}px; border-radius: 4px; box-sizing: border-box; border: 2px solid rgba(246,178,43,0.55); background: rgba(246,178,43,0.15);"></div>
+            </sc-for>
+            <sc-for list="{{buildings}}" as="b" hint-placeholder-count="15">
+              <div style="position: absolute; left: {{b.left}}px; top: {{b.top}}px; width: 54px; height: 54px; box-sizing: border-box; border-radius: 9px; background: {{b.tint}}; border: 2px solid rgba(28,58,138,0.55); box-shadow: 0 4px 0 rgba(28,58,138,0.3); display: flex; align-items: center; justify-content: center;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1C3A8A" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{b.glyph}}"></path></svg>
+              </div>
+            </sc-for>
+            <sc-for list="{{trucks}}" as="t" hint-placeholder-count="2">
+              <div style="position: absolute; left: {{t.left}}px; top: {{t.top}}px; width: 46px; height: 28px; transform: {{t.transform}};">
+                <svg width="46" height="28" viewBox="0 0 46 28" aria-hidden="true">
+                  <rect x="3" y="5" width="32" height="21" rx="4" fill="rgba(0,0,0,0.25)"></rect>
+                  <rect x="1" y="2" width="33" height="22" rx="4" fill="#1C3A8A"></rect>
+                  <rect x="1" y="2" width="33" height="6" rx="3" fill="#F6B22B"></rect>
+                  <rect x="33" y="5" width="11" height="16" rx="3.5" fill="#2D55B8"></rect>
+                  <rect x="40" y="7" width="3" height="12" rx="1" fill="#CFE3FF"></rect>
+                  <ellipse cx="17" cy="15" rx="8" ry="4.2" fill="#F3D9A4" stroke="#B8892E" stroke-width="1.5"></ellipse>
+                </svg>
+              </div>
+            </sc-for>
+            <sc-for list="{{p.items}}" as="b" hint-placeholder-count="15">
+              <div style="position: absolute; left: {{b.badgeLeft}}px; top: {{b.badgeTop}}px; width: 34px; height: 34px; box-sizing: border-box; border-radius: 50%; border: 3px solid #FFFFFF; background: #CF2E22; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: Bungee, system-ui, sans-serif; font-size: 13px; line-height: 1; box-shadow: 0 2px 0 rgba(0,0,0,0.25);">{{b.shown}}</div>
+              <div style="position: absolute; left: {{b.pillLeft}}px; top: {{b.pillTop}}px; height: 24px; box-sizing: border-box; padding: 0 6px; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #1C3A8A; box-shadow: 0 2px 0 rgba(0,0,0,0.22);">
+                <span style="min-width: 14px; text-align: right;">{{b.min}}</span>
+                <span style="position: relative; width: {{b.trackW}}px; height: 8px; border-radius: 4px; background: rgba(28,58,138,0.22);">
+                  <span style="position: absolute; left: {{b.meanX}}px; top: -7px; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 6px solid #1C3A8A; transform: translateX(-4px);"></span>
+                  <span style="position: absolute; left: {{b.fcstX}}px; top: -3px; width: 3px; height: 14px; border-radius: 1px; background: #CF2E22; transform: translateX(-1.5px);"></span>
+                  <span style="position: absolute; left: {{b.actX}}px; top: -3px; width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%; background: #F6B22B; border: 2px solid #1C3A8A; transform: translateX(-7px); display: {{b.actDisplay}};"></span>
+                </span>
+                <span style="min-width: 14px;">{{b.max}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </figure>
+    </sc-for>
+
+    <aside style="width: 268px; display: flex; flex-direction: column; gap: 18px; padding-top: 34px;">
+      <h2 style="margin: 0; font-size: 20px; font-weight: 700;">How to read a bar</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; background: #FFFFFF; border: 1px solid #D5DAD2;">
+        <p style="margin: 0; font-size: 15px; font-weight: 700;">Bayes Bakery</p>
+        <div style="position: relative; height: 72px;">
+          <div style="position: absolute; left: 0; top: 30px; width: 236px; height: 12px; border-radius: 6px; background: rgba(28,58,138,0.22);"></div>
+          <div style="position: absolute; left: 41px; top: 24px; width: 4px; height: 24px; border-radius: 2px; background: #CF2E22;"></div>
+          <div style="position: absolute; left: 88px; top: 14px; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 10px solid #1C3A8A;"></div>
+          <div style="position: absolute; left: 100px; top: 26px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; background: #F6B22B; border: 3px solid #1C3A8A;"></div>
+          <span style="position: absolute; left: 0; top: 50px; font-size: 13px; font-weight: 700; color: #1C3A8A;">25</span>
+          <span style="position: absolute; right: 0; top: 50px; font-size: 13px; font-weight: 700; color: #1C3A8A;">51</span>
+        </div>
+        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.4;">
+          <li style="display: flex; gap: 10px; align-items: flex-start;"><span style="flex: none; margin-top: 3px; width: 4px; height: 14px; border-radius: 2px; background: #CF2E22;"></span><span><strong>Forecast 30.</strong> The single most likely number, shown in the badge.</span></li>
+          <li style="display: flex; gap: 10px; align-items: flex-start;"><span style="flex: none; margin-top: 5px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid #1C3A8A;"></span><span><strong>Average 35.</strong> What the solver plans for. On a lopsided day it sits away from the forecast.</span></li>
+          <li style="display: flex; gap: 10px; align-items: flex-start;"><span style="flex: none; margin-top: 2px; width: 14px; height: 14px; box-sizing: border-box; border-radius: 50%; background: #F6B22B; border: 2px solid #1C3A8A;"></span><span><strong>Actual 37.</strong> Revealed after Done. Both plans are scored on it.</span></li>
+        </ul>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 14px; line-height: 1.4;">
+        <div style="display: flex; align-items: center; gap: 12px;"><span style="flex: none; position: relative; width: 84px; height: 8px; border-radius: 4px; background: rgba(28,58,138,0.22);"><span style="position: absolute; left: 41px; top: -3px; width: 3px; height: 14px; background: #CF2E22;"></span></span><span>Even: could miss either way.</span></div>
+        <div style="display: flex; align-items: center; gap: 12px;"><span style="flex: none; position: relative; width: 84px; height: 8px; border-radius: 4px; background: rgba(28,58,138,0.22);"><span style="position: absolute; left: 14px; top: -3px; width: 3px; height: 14px; background: #CF2E22;"></span></span><span>Long right side: likely to beat the forecast.</span></div>
+        <div style="display: flex; align-items: center; gap: 12px;"><span style="flex: none; position: relative; width: 84px; height: 8px; border-radius: 4px; background: rgba(28,58,138,0.22);"><span style="position: absolute; left: 68px; top: -3px; width: 3px; height: 14px; background: #CF2E22;"></span></span><span>Long left side: likely to fall short, as on Marathon morning.</span></div>
+      </div>
+      <p style="margin: 0; font-size: 14px; line-height: 1.45; color: #4A5468;">The inspiration labels bars "−7 | +7", which makes players add and subtract. Printing the actual low and high skips the sums.</p>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var U = 52, HW = 0.31, K = 1.8;
+    var SX = [1, 4, 7, 10, 13, 16, 19], SY = [1, 4, 7, 10, 13];
+    var xs = [0].concat(SX, [20]), ys = [0].concat(SY, [14]);
+    var tints = ['#F4A6B7', '#7CD3C8', '#F6DC6B', '#BBA9E6'];
+    var G = {
+      wrench: 'M14.5 6.5a4 4 0 0 0-5.3 5.3L3.5 17.5l3 3 5.7-5.7a4 4 0 0 0 5.3-5.3l-2.5 2.5-3-3z',
+      bread: 'M5 12a7 5.5 0 0 1 14 0v6.5H5z M9 9.5l1 3 M12 8.8l1 3 M15 9.5l1 3',
+      cup: 'M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z M16 10h2a2 2 0 0 1 0 4h-2 M8 3v2 M12 3v2',
+      boat: 'M3 15h18l-3 5H6z M12 3v12 M12 4l6 8h-6',
+      film: 'M4 5h16v14H4z M8 5v14 M16 5v14 M4 9h4 M4 15h4 M16 9h4 M16 15h4',
+      apple: 'M12 7c-3-2-7 0-7 5s3 8 5 8c1 0 1.5-.5 2-.5s1 .5 2 .5c2 0 5-3 5-8s-4-7-7-5z M12 7c0-2 1-3 3-4',
+      scissors: 'M9 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0 M8.5 7.5L20 16 M8.5 16.5L20 8',
+      boot: 'M7 3h5v9l6.5 2.5c1 .4 1.5 1.3 1.5 2.3V20H7z M7 16h13',
+      flats: 'M6 3h12v18H6z M9 7h2 M13 7h2 M9 11h2 M13 11h2 M9 15h2 M13 15h2',
+      hall: 'M3 9l9-5 9 5 M5 9v9 M10 9v9 M14 9v9 M19 9v9 M3 20h18',
+      cross: 'M9.5 4h5v5.5H20v5h-5.5V20h-5v-5.5H4v-5h5.5z',
+      barn: 'M3 11l9-7 9 7v9H3z M9 20v-6h6v6',
+      vase: 'M9 3h6 M10 3c0 3-4 4-4 9s3 9 6 9 6-4 6-9-4-6-4-9',
+      joystick: 'M12 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z M12 8.5v6 M4.5 14.5h15v5h-15z M8 17h.01',
+      pizza: 'M12 3L3 19c6 3 12 3 18 0z M9 13h.01 M13 15h.01 M12 9.5h.01'
+    };
+    var B = [
+      ['B08', 12.2, 3, 21, 17, 36, 24.7, 20, 'wrench'],
+      ['B09', 13.8, 2, 30, 25, 51, 35.3, 37, 'bread'],
+      ['B11', 16.8, 2, 21, 17, 36, 24.7, 23, 'cup'],
+      ['B12', 18.2, 3, 17, 14, 29, 20, 23, 'boat'],
+      ['B20', 12.2, 6, 34, 28, 58, 40, 34, 'film'],
+      ['B22', 15.2, 6, 23, 19, 40, 27.3, 26, 'apple'],
+      ['B23', 16.8, 5, 25, 21, 43, 29.7, 26, 'scissors'],
+      ['B32', 12.2, 9, 37, 31, 63, 43.7, 40, 'boot'],
+      ['B35', 16.8, 8, 40, 34, 68, 47.3, 43, 'flats'],
+      ['B36', 18.2, 9, 21, 17, 36, 24.7, 29, 'hall'],
+      ['B43', 10.8, 11, 29, 24, 50, 34.3, 26, 'cross'],
+      ['B45', 13.8, 11, 28, 23, 48, 33, 25, 'barn'],
+      ['B46', 15.2, 12, 30, 25, 51, 35.3, 35, 'vase'],
+      ['B47', 16.8, 11, 19, 16, 33, 22.7, 20, 'joystick'],
+      ['B48', 18.2, 12, 42, 35, 72, 49.7, 45, 'pizza']
+    ];
+    var sites = [['S13',8.5,4],['S14',11.5,4],['S15',13,4],['S16',14.5,4],['S17',17.5,4],['S18',19,4],['S21',13,5.5],['S22',16,5.5],['S23',19,5.5],['S26',10,7],['S27',14.5,7],['S28',17.5,7],['S29',19,7],['S31',10,8.5],['S32',16,8.5],['S36',10,10],['S37',11.5,10],['S38',13,10],['S41',10,11.5],['S42',13,11.5],['S43',16,11.5],['S44',19,11.5],['S04',16,1],['S05',17.5,1],['S08',16,2.5],['S09',19,2.5]];
+    var placed = { S16: true, S43: true };
+
+    var blocks = [], trees = [];
+    for (var i = 0; i < xs.length - 1; i++) {
+      for (var j = 0; j < ys.length - 1; j++) {
+        var x0 = xs[i] === 0 ? 0 : xs[i] + HW, x1 = xs[i + 1] === 20 ? 20 : xs[i + 1] - HW;
+        var y0 = ys[j] === 0 ? 0 : ys[j] + HW, y1 = ys[j + 1] === 14 ? 14 : ys[j + 1] - HW;
+        var inner = i > 0 && i < xs.length - 2 && j > 0 && j < ys.length - 2;
+        var occupied = B.some(function (b) { return b[1] > x0 && b[1] < x1 && b[2] > y0 && b[2] < y1; });
+        var park = inner && !occupied && x0 > 9;
+        blocks.push({ left: x0 * U, top: y0 * U, w: (x1 - x0) * U, h: (y1 - y0) * U, r: inner ? 12 : 4, bg: park ? '#A9D39A' : '#E9E4D8' });
+        if (park) {
+          var cx = (x0 + x1) / 2 * U, cy = (y0 + y1) / 2 * U;
+          [[-30, -26, 30], [18, -14, 38], [-12, 24, 26], [30, 30, 22]].forEach(function (t, n) {
+            trees.push({ left: cx + t[0] - t[2] / 2, top: cy + t[1] - t[2] / 2, d: t[2], bg: n % 2 ? '#3F9A63' : '#2E8B57' });
+          });
+        }
+      }
+    }
+    var dashesV = SX.map(function (x) { return { left: x * U - 1 }; });
+    var dashesH = SY.map(function (y) { return { top: y * U - 1 }; });
+
+    var bays = [], trucks = [];
+    sites.forEach(function (s) {
+      var onV = SX.indexOf(s[1]) >= 0, onH = SY.indexOf(s[2]) >= 0;
+      var w = onV && onH ? 18 : onV ? 14 : 26, h = onV && onH ? 18 : onV ? 26 : 14;
+      if (placed[s[0]]) trucks.push({ left: s[1] * U - 23, top: s[2] * U - 14, transform: onV && !onH ? 'rotate(90deg)' : 'none' });
+      else bays.push({ left: s[1] * U - w / 2, top: s[2] * U - h / 2, w: w, h: h });
+    });
+
+    var buildings = B.map(function (b, n) {
+      return { left: b[1] * U - 27, top: b[2] * U - 27, tint: tints[n % 4], glyph: G[b[8]] };
+    });
+
+    // Upper-left building of a shared block: keep its bar clear of the neighbour's roof.
+    var clampRight = { B11: 916, B35: 916, B45: 760, B47: 916 };
+    function items(after) {
+      return B.map(function (b) {
+        var trackW = Math.round((b[5] - b[4]) * K);
+        var left = Math.round(b[1] * U - 24 - (b[3] - b[4]) * K);
+        if (clampRight[b[0]]) left = Math.min(left, clampRight[b[0]] - (trackW + 52));
+        return {
+          badgeLeft: b[1] * U + 2, badgeTop: b[2] * U - 44,
+          shown: after ? b[7] : b[3],
+          min: b[4], max: b[5], trackW: trackW,
+          pillLeft: left, pillTop: b[2] * U + 32,
+          fcstX: Math.round((b[3] - b[4]) * K), meanX: Math.round((b[6] - b[4]) * K), actX: Math.round((b[7] - b[4]) * K),
+          actDisplay: after ? 'block' : 'none'
+        };
+      });
+    }
+
+    return {
+      blocks: blocks, trees: trees, dashesV: dashesV, dashesH: dashesH, bays: bays, trucks: trucks, buildings: buildings,
+      panels: [
+        { caption: 'Before Done: forecasts with their spread', aria: 'East side map before Done: each building shows its forecast and a range bar', items: items(false) },
+        { caption: 'After Done: where actual demand landed', aria: 'Same map after Done: badges show actual demand and a yellow dot marks it on each bar', items: items(true) }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

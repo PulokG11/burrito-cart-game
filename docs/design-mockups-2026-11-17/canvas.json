@@ -1,0 +1,21 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-17T10:00:00Z" },
+  "title": "Burrito Cart redesign mockups",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1440, "h": 1460, "title": "Design review" },
+    "Play.dc.html": { "x": 0, "y": 1840, "w": 1440, "h": 900, "title": "Play, Round 1 Day 1 (dragging a truck)" },
+    "Results.dc.html": { "x": 1520, "y": 1840, "w": 1440, "h": 900, "title": "Day results" },
+    "Round2.dc.html": { "x": 0, "y": 3120, "w": 1440, "h": 900, "title": "Round 2 forecasts, before and after Done" },
+    "Mobile.dc.html": { "x": 1520, "y": 3120, "w": 390, "h": 844, "title": "Phone, Round 1 Day 1" }
+  },
+  "order": ["Main.dc.html", "Play.dc.html", "Results.dc.html", "Round2.dc.html", "Mobile.dc.html"],
+  "notes": {
+    "titleReview": { "x": 0, "y": -300, "text": "Burrito Cart: review and direction", "kind": "title1", "maxW": 1440 },
+    "titleScreens": { "x": 0, "y": 1560, "text": "Desktop screens", "kind": "title1", "maxW": 2960 },
+    "titleMore": { "x": 0, "y": 2840, "text": "Round 2 and phone", "kind": "title1", "maxW": 2960 }
+  },
+  "designSystems": []
+}

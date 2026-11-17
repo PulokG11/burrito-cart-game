@@ -17,9 +17,11 @@ export default {
         good: v('good'),
         bad: v('bad'),
         bulb: v('bulb'),
+        gold: v('gold'),
       },
       fontFamily: {
-        display: ['Fredoka', 'ui-rounded', 'system-ui', 'sans-serif'],
+        display: ['Bungee', 'ui-rounded', 'system-ui', 'sans-serif'],
+        sans: ['"Atkinson Hyperlegible"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
     },
   },
