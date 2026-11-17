@@ -10,6 +10,18 @@ git push
 
 Pushing to `main` redeploys GitHub Pages. The Neon Function and database are rolled back separately (see each entry).
 
+## v0.4.1-server-scoring (2026-11-17)
+
+The optimal plans no longer ship to the browser.
+
+- `src/scenarios/v1.json` now holds the puzzle only (no `optimal` or `greedy`). The pre-solved plans live in the database and in `backend/seed/optima.v1.json`, which only scripts and tests read. A unit test fails if a plan ever reappears in the bundle.
+- When online, the server scores each day and returns the best plan: the full plan for normal games, only its profit, sales and ingredients for championships. Tips are computed on the server, so championship tips can't point at optimal spots.
+- Offline play still works: the browser solves the day itself with HiGHS.
+- A championship day that can't reach the server shows an error and can be retried, instead of falling back to local scoring.
+- Note: a player can still solve a day themselves from the public scenario data; what is hidden is the answer, not the puzzle.
+
+Rollback: `git checkout v0.4.0-championship -- src server scripts tests` then commit and push, and redeploy the function from that version. The database is unchanged.
+
 ## v0.4.0-championship (2026-11-17)
 
 Championship mode, for classes and events.
@@ -19,7 +31,7 @@ Championship mode, for classes and events.
 - No peeking: results show the best plan's profit but not its trucks; the plan switch, best-plan outlines and tips that point at optimal spots are hidden, and the API stops returning optimal locations for match games.
 - Final screen shows the championship's own leaderboard. Match games stay off the public leaderboard.
 - API (Neon Function `api`, redeployed): `POST /v1/championships`, `GET /v1/championships/{code}`, `GET /v1/championships/{code}/leaderboard`, and `matchCode` on `POST /v1/sessions`. No schema change (the 001 tables already had it).
-- Known limit: the scenario file shipped to browsers still contains the optimal plans, so a determined player could read them with developer tools. Championships use the same 10 days as normal play.
+- Known limit (fixed in v0.4.1): the scenario file shipped to browsers still contained the optimal plans. Championships use the same 10 days as normal play.
 
 Rollback: `git checkout v0.3.1-zoom -- src server scripts` then commit and push, and redeploy the function from that version (`npm run api:build`).
 

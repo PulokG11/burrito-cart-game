@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { drawActuals, randomSeed } from '../engine/demand'
 import { expectedDemand, gapPct, score } from '../engine/score'
+import { greedy } from '../engine/greedy'
 import { buildTips, type Tip } from '../engine/tips'
 import type { Demand, Score } from '../engine/types'
 import { apiEnabled, createSession, submitDay, type RemoteSession } from '../lib/api'
@@ -34,6 +35,7 @@ interface GameState {
   records: DayRecord[]
   solving: boolean
   newsOpen: boolean
+  submitError: string | null
 
   matchCode: string | null
   /** Resolves to an error message when joining a championship fails. */
@@ -62,6 +64,7 @@ export const useGame = create<GameState>((set, get) => ({
   newsOpen: false,
 
   matchCode: null,
+  submitError: null,
 
   start: async (displayName, matchCode) => {
     set({ connecting: true })
@@ -103,40 +106,55 @@ export const useGame = create<GameState>((set, get) => ({
     const { dayIndex, open, seed, remote, solving } = get()
     if (solving) return
     set({ solving: true })
+    set({ submitError: null })
+    const { matchCode } = get()
     const scn = SCENARIOS[dayIndex]
     const actual = drawActuals(scn, seed)
-    const optimalSites = scn.optimal.sites
-    const live = await solveLive(scn)
     const player = score(scn, open, actual)
-    const optimal = score(scn, optimalSites, actual)
-    const record: DayRecord = {
-      scenarioId: scn.id,
-      open: [...open].sort(),
-      actual,
-      player,
-      optimal,
-      optimalSites,
-      gapPct: gapPct(player.profit, optimal.profit),
-      solveMs: live && live.status === 'Optimal' ? live.ms : null,
-      // In a championship, drop tips that point at where the optimal trucks are.
-      tips: buildTips(scn, open, optimalSites, actual, expectedDemand(scn), scn.greedy.sites).filter(
-        (t) => !get().matchCode || !['great', 'movable', 'underserved'].includes(t.kind),
-      ),
-      verification: remote ? 'pending' : 'offline',
-    }
-    set((s) => ({ records: [...s.records, record], screen: 'results', solving: false }))
-
-    if (remote) {
-      const res = await submitDay(remote, scn.id, record.open)
-      const verification: Verification = !res
-        ? 'offline'
-        : Math.abs(res.player.profit - player.profit) < 0.01 && Math.abs(res.optimal.profit - optimal.profit) < 0.01
-          ? 'verified'
-          : 'mismatch'
+    const sortedOpen = [...open].sort()
+    const done = (rec: Omit<DayRecord, 'scenarioId' | 'open' | 'actual' | 'player' | 'gapPct'>) =>
       set((s) => ({
-        records: s.records.map((r) => (r.scenarioId === scn.id ? { ...r, verification } : r)),
+        records: [...s.records, { scenarioId: scn.id, open: sortedOpen, actual, player, gapPct: gapPct(player.profit, rec.optimal.profit), ...rec }],
+        screen: 'results',
+        solving: false,
       }))
+
+    // The optimal plans are not shipped to the browser: the server scores the day and supplies them.
+    if (remote) {
+      const [res, live] = await Promise.all([submitDay(remote, scn.id, sortedOpen), matchCode ? null : solveLive(scn)])
+      if (res) {
+        const sites = res.optimal.sites ?? []
+        const optimal: Score = res.optimal.sites
+          ? score(scn, sites, actual)
+          : { profit: res.optimal.profit, revenue: res.optimal.revenue, ingredient: res.optimal.ingredient, truckCost: 0, won: {}, assign: {} }
+        return done({
+          optimal,
+          optimalSites: sites,
+          solveMs: live && live.status === 'Optimal' ? live.ms : null,
+          tips: res.tips,
+          verification: Math.abs(res.player.profit - player.profit) < 0.01 ? 'verified' : 'mismatch',
+        })
+      }
+      if (matchCode) {
+        set({ solving: false, submitError: 'Could not reach the game server, so this championship day was not scored. Check your connection and press Done again.' })
+        return
+      }
     }
+
+    // Offline: work out the best plan on this device.
+    const live = await solveLive(scn)
+    if (!live || live.status !== 'Optimal') {
+      set({ solving: false, submitError: 'Could not work out the best plan on this device. Press Done to try again.' })
+      return
+    }
+    const planned = expectedDemand(scn)
+    done({
+      optimal: score(scn, live.sites, actual),
+      optimalSites: live.sites,
+      solveMs: live.ms,
+      tips: buildTips(scn, open, live.sites, actual, planned, greedy(scn, planned).sites),
+      verification: 'offline',
+    })
   },
 
   nextDay: () => {

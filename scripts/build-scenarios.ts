@@ -7,7 +7,7 @@ import { hashString, mulberry32 } from '../src/engine/demand.ts'
 import { greedy } from '../src/engine/greedy.ts'
 import { buildLp, openSitesFromColumns } from '../src/engine/lp.ts'
 import { expectedDemand, score } from '../src/engine/score.ts'
-import type { Building, Economics, Scenario, Site, WalkProfile, Wrinkle } from '../src/engine/types.ts'
+import type { Building, Economics, Scenario, Site, SolvedScenario, WalkProfile, Wrinkle } from '../src/engine/types.ts'
 import { buildReach } from '../src/engine/walk.ts'
 
 const VERSION = 'v1'
@@ -184,7 +184,7 @@ function bruteForce(scn: Scenario): number {
   return best
 }
 
-const scenarios: Scenario[] = []
+const scenarios: SolvedScenario[] = []
 for (const spec of SPECS) {
   const sites = sitesFor(spec.round, spec.sites)
   const uncertain = spec.round === 2
@@ -192,7 +192,7 @@ for (const spec of SPECS) {
     version: VERSION, mode: 'normal' as const, round: spec.round, day: spec.day,
     economics: spec.economics, walk: spec.walk, buildings: spec.buildings, sites,
   }
-  const scn: Scenario = {
+  const scn: SolvedScenario = {
     id: `${VERSION}-r${spec.round}-d${spec.day}`,
     ...core,
     title: spec.title,
@@ -225,8 +225,14 @@ for (const spec of SPECS) {
   )
 }
 
+// The browser bundle gets the puzzle only; the answers stay server-side (DB seed) and in test fixtures.
 mkdirSync('src/scenarios', { recursive: true })
-writeFileSync('src/scenarios/v1.json', JSON.stringify(scenarios) + '\n')
+writeFileSync('src/scenarios/v1.json', JSON.stringify(scenarios.map(({ optimal: _o, greedy: _g, ...puzzle }) => puzzle)) + '\n')
+mkdirSync('backend/seed', { recursive: true })
+writeFileSync(
+  'backend/seed/optima.v1.json',
+  JSON.stringify(Object.fromEntries(scenarios.map((s) => [s.id, { optimal: s.optimal, greedy: s.greedy }])), null, 1) + '\n',
+)
 
 const q = (s: string) => `'${s.replace(/'/g, "''")}'`
 const sql: string[] = [

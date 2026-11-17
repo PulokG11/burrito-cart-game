@@ -58,7 +58,7 @@ const Op = ({ c }: { c: string }) => (
 )
 
 export function PlayScreen() {
-  const { dayIndex, open, records, solving, matchCode, toggleSite, placeAt, moveTruck, removeTruck, clearTrucks, finishDay } = useGame()
+  const { dayIndex, open, records, solving, matchCode, submitError, toggleSite, placeAt, moveTruck, removeTruck, clearTrucks, finishDay } = useGame()
   const scn = SCENARIOS[dayIndex]
   const mapRef = useRef<MapHandle>(null)
   const trashRef = useRef<HTMLDivElement>(null)
@@ -255,6 +255,11 @@ export function PlayScreen() {
       </div>
 
       <footer className="sticky bottom-0 z-10 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-line bg-surface px-3 py-2.5 sm:py-3 lg:px-6">
+        {submitError && (
+          <p role="alert" className="w-full rounded-lg bg-bad/10 px-3 py-2 text-[15px] font-bold text-bad">
+            {submitError}
+          </p>
+        )}
         <p className="w-full text-[15px] sm:hidden">
           <span className={`num text-2xl ${live.profit >= 0 ? 'text-good' : 'text-bad'}`}>{money(live.profit)}</span>{' '}
           <span className="text-muted">

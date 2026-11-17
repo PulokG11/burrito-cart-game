@@ -5,7 +5,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import pg from 'pg'
 import { drawActuals } from '../src/engine/demand.ts'
 import { score } from '../src/engine/score.ts'
-import type { Scenario } from '../src/engine/types.ts'
+import { SOLVED } from '../tests/solved.ts'
 
 if (existsSync('.env.local')) {
   for (const line of readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
@@ -14,7 +14,7 @@ if (existsSync('.env.local')) {
   }
 }
 
-const scenarios: Scenario[] = JSON.parse(readFileSync('src/scenarios/v1.json', 'utf8'))
+const scenarios = SOLVED
 const remote = process.env.API_URL?.replace(/\/+$/, '')
 const local = remote ? null : (await import('../server/index.ts')).default
 const origin = 'https://pulokg11.github.io'
@@ -60,6 +60,8 @@ try {
     const mine = score(scn, open, actual).profit
     assert.ok(Math.abs(r.body.player.profit - mine) < 1e-6, `${scn.id}: profit mismatch`)
     assert.ok(Math.abs(r.body.optimal.profit - score(scn, scn.optimal.sites, actual).profit) < 1e-6)
+    assert.deepEqual([...r.body.optimal.sites].sort(), [...scn.optimal.sites].sort(), 'normal games get the optimal plan from the server')
+    assert.ok(r.body.tips[0]?.kind === 'wrinkle', 'server sends tips')
     expectedTotal += Math.round(mine * 100) / 100
     assert.equal(r.body.recorded, true)
     assert.equal(r.body.completed, i === scenarios.length - 1)
@@ -96,6 +98,10 @@ try {
   const rb = await call('POST', `/v1/sessions/${b.body.sessionId}/days/${r2.id}/submit`, { openSites: [] }, b.body.token)
   assert.deepEqual(ra.body.actual, rb.body.actual, 'same actual demand for every player in the match')
   assert.equal(ra.body.optimal.sites, undefined, 'championship never reveals optimal locations')
+  assert.equal(ra.body.optimal.truckCost, undefined, 'championship hides the optimal truck count')
+  assert.equal(ra.body.greedySites, undefined)
+  assert.ok(Array.isArray(ra.body.tips) && ra.body.tips.length > 0, 'server sends tips')
+  assert.ok(!ra.body.tips.some((t: { kind: string }) => ['great', 'movable', 'underserved'].includes(t.kind)), 'no tips that point at optimal spots')
 
   for (const scn of scenarios.filter((s) => s.id !== r2.id)) {
     const r = await call('POST', `/v1/sessions/${a.body.sessionId}/days/${scn.id}/submit`, { openSites: scn.greedy.sites }, a.body.token)

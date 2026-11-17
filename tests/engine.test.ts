@@ -5,11 +5,20 @@ import { greedy } from '../src/engine/greedy'
 import { buildLp, openSitesFromColumns } from '../src/engine/lp'
 import { expectedDemand, forecastDemand, gapPct, score } from '../src/engine/score'
 import { buildTips } from '../src/engine/tips'
-import type { Scenario } from '../src/engine/types'
 import { alpha } from '../src/engine/walk'
-import { SCENARIOS } from '../src/scenarios'
+import { SCENARIOS as SHIPPED } from '../src/scenarios'
+import { SOLVED as SCENARIOS } from './solved'
 
-const byId = (id: string) => SCENARIOS.find((s) => s.id === id) as Scenario
+const byId = (id: string) => SCENARIOS.find((s) => s.id === id)!
+
+describe('shipped bundle', () => {
+  it('does not contain any pre-solved plan', () => {
+    for (const s of SHIPPED) {
+      expect(s).not.toHaveProperty('optimal')
+      expect(s).not.toHaveProperty('greedy')
+    }
+  })
+})
 
 describe('walking profile', () => {
   const w = { type: 'linear' as const, plateau: 0.8, maxDistance: 5 }

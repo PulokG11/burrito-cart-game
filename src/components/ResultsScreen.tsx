@@ -156,7 +156,7 @@ export function ResultsScreen() {
         <p className="text-sm leading-relaxed text-[#C9D4F2]">
           {rec.solveMs != null
             ? `HiGHS searched ${combos(scn.sites.length)} possible placements and proved the best one in ${Math.max(1, Math.round(rec.solveMs))} ms, in your browser.`
-            : 'The best plan was worked out ahead of time with the HiGHS solver.'}
+            : 'The best plan was worked out ahead of time with the HiGHS solver and checked on the server.'}
           {scn.uncertain && ' Both plans were scored on the same actual demand; the solver planned for the average of each range.'}
         </p>
 

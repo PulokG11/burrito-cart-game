@@ -1,3 +1,4 @@
+import type { Tip } from '../engine/tips'
 import type { Demand } from '../engine/types'
 
 const BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/+$/, '')
@@ -18,7 +19,9 @@ export interface SubmitResponse {
   completed: boolean
   actual: Demand
   player: { profit: number }
-  optimal: { sites?: string[]; profit: number }
+  optimal: { sites?: string[]; profit: number; revenue: number; ingredient: number; truckCost?: number }
+  greedySites?: string[]
+  tips: Tip[]
   gapPct: number
 }
 

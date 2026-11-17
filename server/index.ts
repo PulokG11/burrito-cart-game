@@ -2,7 +2,8 @@
 // Talks to Postgres over Neon's HTTP SQL endpoint so the bundle has no npm dependencies.
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto'
 import { drawActuals } from '../src/engine/demand.ts'
-import { gapPct, score } from '../src/engine/score.ts'
+import { expectedDemand, gapPct, score } from '../src/engine/score.ts'
+import { buildTips } from '../src/engine/tips.ts'
 import type { Scenario } from '../src/engine/types.ts'
 
 const BUILD = process.env.BUILD_SHA ?? 'dev'
@@ -32,26 +33,33 @@ async function sql<T>(query: string, params: unknown[] = []): Promise<T[]> {
   return body.rows.map((r) => (typeof r.j === 'string' ? JSON.parse(r.j) : r.j))
 }
 
-const scenarios = new Map<string, Promise<Scenario & { optimalSites: string[]; siteIds: Set<string> }>>()
+const scenarios = new Map<string, Promise<Scenario & { optimalSites: string[]; greedySites: string[]; siteIds: Set<string> }>>()
 
 function loadScenario(id: string) {
   let p = scenarios.get(id)
   if (!p) {
     p = sql<any>(
       `SELECT json_build_object(
-        'id', s.scenario_id, 'uncertain', s.is_uncertain, 'contentHash', s.content_hash,
+        'id', s.scenario_id, 'uncertain', s.is_uncertain, 'contentHash', s.content_hash, 'wrinkle', s.wrinkle,
         'economics', json_build_object('revenue', s.revenue_r, 'ingredient', s.ingredient_k, 'truckCost', s.truck_cost_f),
-        'buildings', (SELECT json_agg(json_build_object('id', b.building_id, 'demand', b.demand, 'min', b.err_min, 'max', b.err_max) ORDER BY b.building_id)
+        'buildings', (SELECT json_agg(json_build_object('id', b.building_id, 'x', b.x, 'y', b.y, 'demand', b.demand, 'min', b.err_min, 'max', b.err_max) ORDER BY b.building_id)
                       FROM scenario_building b WHERE b.scenario_id = s.scenario_id),
-        'sites', (SELECT json_agg(t.site_id ORDER BY t.site_id) FROM scenario_site t WHERE t.scenario_id = s.scenario_id),
+        'sites', (SELECT json_agg(json_build_object('id', t.site_id, 'x', t.x, 'y', t.y) ORDER BY t.site_id) FROM scenario_site t WHERE t.scenario_id = s.scenario_id),
         'reach', (SELECT json_agg(json_build_object('b', r.building_id, 's', r.site_id, 'a', r.alpha))
                   FROM scenario_reach r WHERE r.scenario_id = s.scenario_id),
-        'optimal', o.open_sites) AS j
+        'optimal', o.open_sites, 'greedy', o.greedy_sites) AS j
       FROM scenario s JOIN optimal_solution o USING (scenario_id) WHERE s.scenario_id = $1`,
       [id],
     ).then(([row]) => {
       if (!row) throw new HttpError(404, 'unknown scenario')
-      return { ...row, sites: row.sites.map((s: string) => ({ id: s })), siteIds: new Set(row.sites), optimalSites: row.optimal }
+      const min = (v: number | null) => (v == null ? undefined : v)
+      return {
+        ...row,
+        buildings: row.buildings.map((b: any) => ({ ...b, min: min(b.min), max: min(b.max) })),
+        siteIds: new Set(row.sites.map((s: { id: string }) => s.id)),
+        optimalSites: row.optimal,
+        greedySites: row.greedy,
+      }
     })
     p.catch(() => scenarios.delete(id))
     scenarios.set(id, p)
@@ -229,8 +237,14 @@ async function submitDay(req: Request, sessionId: string, scenarioId: string) {
     totalProfit: res.totalProfit,
     actual,
     player: { revenue: player.revenue, ingredient: player.ingredient, truckCost: player.truckCost, profit: player.profit },
-    // Championship rule: show the optimal profit, never the optimal locations.
-    optimal: session.matchId ? { profit: optimal.profit } : { sites: scn.optimalSites, profit: optimal.profit },
+    // Championship rule: show the optimal profit, never the optimal locations (or how many trucks it used).
+    optimal: session.matchId
+      ? { profit: optimal.profit, revenue: optimal.revenue, ingredient: optimal.ingredient }
+      : { sites: scn.optimalSites, profit: optimal.profit, revenue: optimal.revenue, ingredient: optimal.ingredient, truckCost: optimal.truckCost },
+    greedySites: session.matchId ? undefined : scn.greedySites,
+    tips: buildTips(scn, open as string[], scn.optimalSites, actual, expectedDemand(scn), scn.greedySites).filter(
+      (t) => !session.matchId || !['great', 'movable', 'underserved'].includes(t.kind),
+    ),
     gapPct: gap,
   }
 }

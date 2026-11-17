@@ -1,0 +1,226 @@
+{
+ "v1-r1-d1": {
+  "optimal": {
+   "sites": [
+    "S02",
+    "S07",
+    "S14"
+   ],
+   "plannedProfit": 461.89
+  },
+  "greedy": {
+   "sites": [
+    "S02",
+    "S07",
+    "S14"
+   ],
+   "plannedProfit": 461.89
+  }
+ },
+ "v1-r1-d2": {
+  "optimal": {
+   "sites": [
+    "S06",
+    "S07",
+    "S09",
+    "S18",
+    "S20",
+    "S21"
+   ],
+   "plannedProfit": 2617.38
+  },
+  "greedy": {
+   "sites": [
+    "S06",
+    "S07",
+    "S09",
+    "S18",
+    "S20",
+    "S21"
+   ],
+   "plannedProfit": 2617.38
+  }
+ },
+ "v1-r1-d3": {
+  "optimal": {
+   "sites": [
+    "S09",
+    "S14",
+    "S21",
+    "S30"
+   ],
+   "plannedProfit": 1156.27
+  },
+  "greedy": {
+   "sites": [
+    "S09",
+    "S14",
+    "S28",
+    "S30"
+   ],
+   "plannedProfit": 1137.4
+  }
+ },
+ "v1-r1-d4": {
+  "optimal": {
+   "sites": [
+    "S09",
+    "S11",
+    "S13",
+    "S17",
+    "S22",
+    "S34",
+    "S35",
+    "S39"
+   ],
+   "plannedProfit": 1600.77
+  },
+  "greedy": {
+   "sites": [
+    "S09",
+    "S11",
+    "S13",
+    "S17",
+    "S22",
+    "S25",
+    "S34",
+    "S39"
+   ],
+   "plannedProfit": 1583.69
+  }
+ },
+ "v1-r1-d5": {
+  "optimal": {
+   "sites": [
+    "S15",
+    "S18",
+    "S21",
+    "S41",
+    "S43",
+    "S44"
+   ],
+   "plannedProfit": 2979.57
+  },
+  "greedy": {
+   "sites": [
+    "S15",
+    "S17",
+    "S21",
+    "S41",
+    "S43",
+    "S44"
+   ],
+   "plannedProfit": 2950.05
+  }
+ },
+ "v1-r2-d1": {
+  "optimal": {
+   "sites": [
+    "S06",
+    "S09",
+    "S21",
+    "S22"
+   ],
+   "plannedProfit": 1248.2
+  },
+  "greedy": {
+   "sites": [
+    "S06",
+    "S09",
+    "S21",
+    "S22"
+   ],
+   "plannedProfit": 1248.2
+  }
+ },
+ "v1-r2-d2": {
+  "optimal": {
+   "sites": [
+    "S06",
+    "S15",
+    "S17",
+    "S26",
+    "S28"
+   ],
+   "plannedProfit": 1710.7
+  },
+  "greedy": {
+   "sites": [
+    "S06",
+    "S10",
+    "S17",
+    "S22",
+    "S26",
+    "S28"
+   ],
+   "plannedProfit": 1641.66
+  }
+ },
+ "v1-r2-d3": {
+  "optimal": {
+   "sites": [
+    "S08",
+    "S11",
+    "S30",
+    "S36"
+   ],
+   "plannedProfit": 1359.67
+  },
+  "greedy": {
+   "sites": [
+    "S08",
+    "S11",
+    "S30",
+    "S36"
+   ],
+   "plannedProfit": 1359.67
+  }
+ },
+ "v1-r2-d4": {
+  "optimal": {
+   "sites": [
+    "S07",
+    "S16",
+    "S24",
+    "S36",
+    "S43"
+   ],
+   "plannedProfit": 1296.33
+  },
+  "greedy": {
+   "sites": [
+    "S12",
+    "S16",
+    "S32",
+    "S33",
+    "S37",
+    "S43"
+   ],
+   "plannedProfit": 1183.43
+  }
+ },
+ "v1-r2-d5": {
+  "optimal": {
+   "sites": [
+    "S08",
+    "S20",
+    "S28",
+    "S36",
+    "S48",
+    "S51"
+   ],
+   "plannedProfit": 1682.12
+  },
+  "greedy": {
+   "sites": [
+    "S15",
+    "S23",
+    "S26",
+    "S44",
+    "S48",
+    "S51"
+   ],
+   "plannedProfit": 1585.32
+  }
+ }
+}

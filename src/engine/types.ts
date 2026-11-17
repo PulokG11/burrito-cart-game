@@ -69,6 +69,10 @@ export interface Scenario {
   sites: Site[]
   reach: Reach[]
   contentHash: string
+}
+
+// Pre-solved plans. Kept on the server and in test fixtures, never shipped to browsers.
+export interface SolvedScenario extends Scenario {
   optimal: Plan
   greedy: Plan
 }
